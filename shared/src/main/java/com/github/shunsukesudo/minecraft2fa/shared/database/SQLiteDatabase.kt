@@ -6,13 +6,10 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 
 internal class SQLiteDatabase(
-    databaseAddress: String,
     databaseName: String,
-    user: String,
-    password: String
 ) : MC2FADatabase {
 
-    private val database = Database.connect(databaseAddress+databaseName, driver = "org.sqlite.JDBC", user = user, password = password)
+    private val database = Database.connect(url = "jdbc:sqlite://$databaseName", driver = "org.sqlite.JDBC")
     private val authentication = Authentication(this.database)
     private val integration = Integration(this.database)
 

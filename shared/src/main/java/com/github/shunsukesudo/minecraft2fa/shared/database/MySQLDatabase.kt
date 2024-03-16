@@ -8,11 +8,12 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 internal class MySQLDatabase(
     databaseAddress: String,
     databaseName: String,
+    properties: String,
     user: String,
     password: String
 ) : MC2FADatabase {
 
-    private val database = Database.connect(databaseAddress+databaseName, driver = "com.mysql.cj.jdbc.Driver", user = user, password = password)
+    private val database = Database.connect(url = "jdbc:mySQL://$databaseAddress/$databaseName$properties", driver = "com.mysql.cj.jdbc.Driver", user = user, password = password)
     private val authentication = Authentication(this.database)
     private val integration = Integration(this.database)
 
