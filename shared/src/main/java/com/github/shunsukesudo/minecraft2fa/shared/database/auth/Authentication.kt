@@ -1,11 +1,14 @@
 package com.github.shunsukesudo.minecraft2fa.shared.database.auth
 
 import com.github.shunsukesudo.minecraft2fa.shared.database.integration.IntegrationInfo
+import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
-object Authentication{
+class Authentication(
+    private val database: Database
+){
 
     /**
      *
@@ -27,7 +30,7 @@ object Authentication{
      * @param BackUpCodes TOTP BackUp Codes
      */
     fun add2FAAuthenticationInformation(playerID: Int, SecretKey: String, BackUpCodes: List<String>){
-        transaction {
+        transaction(database) {
             val userInfo = IntegrationInfo.selectAll().where { IntegrationInfo.id eq playerID }.map { it[IntegrationInfo.id] }
 
             val authinfo = AuthInformation.new {

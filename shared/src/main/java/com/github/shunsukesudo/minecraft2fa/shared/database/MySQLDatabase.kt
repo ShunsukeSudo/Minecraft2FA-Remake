@@ -10,16 +10,20 @@ internal class MySQLDatabase(
     databaseName: String
 ) : MC2FADatabase {
 
-    init {
-        TransactionManager.defaultDatabase = Database.connect(databaseAddress+databaseName, driver = "com.mysql.cj.jdbc.Driver")
-    }
+    private val database = Database.connect(databaseAddress+databaseName, driver = "com.mysql.cj.jdbc.Driver")
+    private val authentication = Authentication(this.database)
+    private val integration = Integration(this.database)
 
     override fun authentication(): Authentication {
-        return Authentication
+        return this.authentication
     }
 
     override fun integration(): Integration {
-        return Integration
+        return this.integration
+    }
+
+    override fun getDatabaseConnection(): Database {
+        return this.database
     }
 
 }
