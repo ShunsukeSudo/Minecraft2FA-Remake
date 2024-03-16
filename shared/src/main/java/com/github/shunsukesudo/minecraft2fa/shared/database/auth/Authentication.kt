@@ -1,8 +1,11 @@
 package com.github.shunsukesudo.minecraft2fa.shared.database.auth
 
-interface Authentication {
+import com.github.shunsukesudo.minecraft2fa.shared.database.integration.IntegrationInfo
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 
-    //fun createTableIfNotExists()
+object Authentication{
 
     /**
      *
@@ -11,7 +14,9 @@ interface Authentication {
      * @param playerID Unique user ID stored in integration table
      * @return true if exists, otherwise false.
      */
-    fun is2FAAuthenticationInformationExists(playerID: Int): Boolean
+    fun is2FAAuthenticationInformationExists(playerID: Int): Boolean {
+        return false
+    }
 
     /**
      *
@@ -21,7 +26,21 @@ interface Authentication {
      * @param SecretKey TOTP Secret key
      * @param BackUpCodes TOTP BackUp Codes
      */
-    fun add2FAAuthenticationInformation(playerID: Int, SecretKey: String, BackUpCodes: List<String>)
+    fun add2FAAuthenticationInformation(playerID: Int, SecretKey: String, BackUpCodes: List<String>){
+        transaction {
+            val userInfo = IntegrationInfo.selectAll().where { IntegrationInfo.id eq playerID }.map { it[IntegrationInfo.id] }
+
+            val authinfo = AuthInformation.new {
+                this.userID = userInfo.first()
+                this.secretKey = secretKey
+            }
+
+            val backupCodes = AuthBackCodes.new {
+                this.authID = authinfo.userID
+                this.backupCodes = backupCodes
+            }
+        }
+    }
 
     /**
      *
@@ -31,7 +50,8 @@ interface Authentication {
      * @param SecretKey TOTP Secret key
      * @param BackUpCodes TOTP BackUp Codes
      */
-    fun update2FAAuthenticationInformation(playerID: Int, SecretKey: String, BackUpCodes: List<String>)
+    fun update2FAAuthenticationInformation(playerID: Int, SecretKey: String, BackUpCodes: List<String>){
+    }
 
     /**
      *
@@ -39,7 +59,8 @@ interface Authentication {
      *
      * @param playerID Unique user ID stored in integration table
      */
-    fun remove2FAAuthenticationInformation(playerID: Int)
+    fun remove2FAAuthenticationInformation(playerID: Int){
+    }
 
     /**
      *
@@ -48,7 +69,9 @@ interface Authentication {
      * @param playerID Unique user ID stored in integration table
      * @return Secret key if found, otherwise null
      */
-    fun get2FASecretKey(playerID: Int): String?
+    fun get2FASecretKey(playerID: Int): String? {
+        return null
+    }
 
     /**
      *
@@ -57,5 +80,7 @@ interface Authentication {
      * @param playerID Unique user ID stored in integration table
      * @return Backup codes if found, otherwise empty list
      */
-    fun get2FABackUpCodes(playerID: Int): List<Int>
+    fun get2FABackUpCodes(playerID: Int): List<Int> {
+        return Collections.emptyList()
+    }
 }

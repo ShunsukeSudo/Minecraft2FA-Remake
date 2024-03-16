@@ -8,10 +8,10 @@ interface MC2FADatabase {
     /**
      * Returns authentication class
      */
-    fun getAuthentication(): Authentication
+    fun authentication(): Authentication
 
     /**
      * Returns integration class
      */
-    fun getIntegration(): Integration
+    fun integration(): Integration
 }

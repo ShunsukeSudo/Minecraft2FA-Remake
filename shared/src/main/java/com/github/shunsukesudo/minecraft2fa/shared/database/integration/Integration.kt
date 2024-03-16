@@ -1,19 +1,24 @@
 package com.github.shunsukesudo.minecraft2fa.shared.database.integration
 
-interface Integration {
+object Integration{
+
     /**
      *
      * @param discordID Discord User ID
      * @return true if information exists, otherwise false
      */
-    fun isIntegrationInformationExists(discordID: Int): Boolean
+    fun isIntegrationInformationExists(discordID: Int): Boolean {
+        return false
+    }
 
     /**
      *
      * @param MinecraftUUID Minecraft User UUID
      * @return true if information exists, otherwise false
      */
-    fun isIntegrationInformationExists(MinecraftUUID: String): Boolean
+    fun isIntegrationInformationExists(MinecraftUUID: String): Boolean {
+        return false
+    }
 
     /**
      *
@@ -23,7 +28,9 @@ interface Integration {
      * @param MinecraftUUID Minecraft User UUID
      * @return true if information exists, otherwise false
      */
-    fun isIntegrationInformationExists(DiscordID: Int, MinecraftUUID: String): Boolean
+    fun isIntegrationInformationExists(DiscordID: Int, MinecraftUUID: String): Boolean {
+        return false
+    }
 
     /**
      *
@@ -32,7 +39,9 @@ interface Integration {
      * @param discordID Discord User ID
      * @param MinecraftUUID Minecraft User UUID
      */
-    fun addIntegrationInformation(discordID: Int, MinecraftUUID: String)
+    fun addIntegrationInformation(discordID: Int, MinecraftUUID: String) {
+
+    }
 
     /**
      *
@@ -41,7 +50,9 @@ interface Integration {
      * @param discordID Discord User ID
      * @param MinecraftUUID Minecraft User UUID
      */
-    fun removeIntegrationInformation(discordID: Int, MinecraftUUID: String)
+    fun removeIntegrationInformation(discordID: Int, MinecraftUUID: String) {
+
+    }
 
     /**
      *
@@ -50,7 +61,9 @@ interface Integration {
      * @param discordID Discord User ID
      * @param NewMinecraftUUID New Minecraft User UUID to update
      */
-    fun updateIntegrationInformation(discordID: Int, NewMinecraftUUID: String)
+    fun updateIntegrationInformation(discordID: Int, NewMinecraftUUID: String) {
+
+    }
 
     /**
      *
@@ -59,7 +72,9 @@ interface Integration {
      * @param MinecraftUUID Minecraft User UUID
      * @param NewDiscordID New Discord ID to update
      */
-    fun updateIntegrationInformation(MinecraftUUID: String, NewDiscordID: Int)
+    fun updateIntegrationInformation(MinecraftUUID: String, NewDiscordID: Int) {
+
+    }
 
     /**
      * Search by Minecraft UUID and retrieves unique ID from database.
@@ -67,7 +82,9 @@ interface Integration {
      * @param MinecraftUUID Minecraft User UUID
      * @return Unique User ID if found, otherwise -1.
      */
-    fun getPlayerID(MinecraftUUID: String): Int
+    fun getPlayerID(MinecraftUUID: String): Int {
+        return -1
+    }
 
     /**
      *
@@ -76,7 +93,9 @@ interface Integration {
      * @param discordID Discord User ID
      * @return Unique User ID if found, otherwise -1.
      */
-    fun getPlayerID(discordID: Int): Int
+    fun getPlayerID(discordID: Int): Int {
+        return -1
+    }
 
     /**
      *
@@ -85,7 +104,9 @@ interface Integration {
      * @param DiscordID Discord User ID
      * @return Minecraft UUID if found, otherwise null.
      */
-    fun getMinecraftUUIDFromDiscordID(DiscordID: Int): String?
+    fun getMinecraftUUIDFromDiscordID(DiscordID: Int): String? {
+        return null
+    }
 
     /**
      *
@@ -94,5 +115,7 @@ interface Integration {
      * @param MinecraftUUID Minecraft User UUID
      * @return Discord ID if found, otherwise -1.
      */
-    fun getDiscordIDFromMinecraftUUID(MinecraftUUID: String): Int
+    fun getDiscordIDFromMinecraftUUID(MinecraftUUID: String): Int {
+        return -1
+    }
 }

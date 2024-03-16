@@ -1,9 +1,7 @@
 package com.github.shunsukesudo.minecraft2fa.shared.database
 
-import com.github.shunsukesudo.minecraft2fa.shared.database.auth.AuthenticationMySQLImpl
 import com.github.shunsukesudo.minecraft2fa.shared.database.auth.Authentication
 import com.github.shunsukesudo.minecraft2fa.shared.database.integration.Integration
-import com.github.shunsukesudo.minecraft2fa.shared.database.integration.IntegrationMySQLImpl
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 
@@ -16,12 +14,12 @@ internal class MySQLDatabase(
         TransactionManager.defaultDatabase = Database.connect(databaseAddress+databaseName, driver = "com.mysql.cj.jdbc.Driver")
     }
 
-    override fun getAuthentication(): Authentication {
-        return AuthenticationMySQLImpl()
+    override fun authentication(): Authentication {
+        return Authentication
     }
 
-    override fun getIntegration(): Integration {
-        return IntegrationMySQLImpl()
+    override fun integration(): Integration {
+        return Integration
     }
 
 }
