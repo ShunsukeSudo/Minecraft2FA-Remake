@@ -1,0 +1,9 @@
+dependencies{
+    compileOnly("io.github.waterfallmc:waterfall-api:${project.ext["baseProxyAPIVersion"]}-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:${project.ext["baseServerAPIVersion"]}-R0.1-SNAPSHOT")
+    implementation("mysql:mysql-connector-java:8.0.15")
+    implementation("org.xerial:sqlite-jdbc:3.45.2.0")
+    implementation("com.warrenstrange:googleauth:1.5.0")
+    implementation("com.google.zxing:core:3.5.0")
+    implementation("com.google.zxing:javase:3.5.0")
+}
