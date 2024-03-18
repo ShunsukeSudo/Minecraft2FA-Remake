@@ -129,8 +129,6 @@ class Authentication(
         transaction(database) {
             bc = AuthBackupCodeTable.selectAll().where { AuthBackupCodeTable.authID eq authID }.map { it[AuthBackupCodeTable.backupCode] }
         }
-        if(bc.isEmpty())
-            return Collections.emptyList()
 
         return bc
     }
