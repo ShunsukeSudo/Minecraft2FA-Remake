@@ -2,11 +2,11 @@ package com.github.shunsukesudo.minecraft2fa.shared.database
 
 object DatabaseFactory {
     object SQLite {
-        fun newConnection(dbName: String): MC2FADatabase {
-            if(!dbName.endsWith(".db"))
-                return SQLiteDatabase(dbName.plus(".db"))
+        fun newConnection(databaseName: String): MC2FADatabase {
+            if(!databaseName.endsWith(".db"))
+                return SQLiteDatabase(databaseName.plus(".db"))
 
-            return SQLiteDatabase(dbName)
+            return SQLiteDatabase(databaseName)
         }
     }
 
