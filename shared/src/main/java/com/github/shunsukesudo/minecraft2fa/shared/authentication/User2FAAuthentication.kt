@@ -1,14 +1,13 @@
 package com.github.shunsukesudo.minecraft2fa.shared.authentication
 
 import com.warrenstrange.googleauth.GoogleAuthenticator
-import com.warrenstrange.googleauth.GoogleAuthenticatorKey
 
-class UserAuthentication private constructor(
+class User2FAAuthentication private constructor(
     private val discordID: Long,
 ) {
     companion object {
         private val auth = GoogleAuthenticator()
-        private val credentials = HashMap<Long, UserAuthentication?>()
+        private val credentials = HashMap<Long, User2FAAuthentication?>()
 
         @JvmStatic
         fun authorize(secretKey: String, TOTPCode: Int): Boolean {
@@ -21,11 +20,11 @@ class UserAuthentication private constructor(
          * Creates a new credentials.
          *
          * @param discordID Discord User ID
-         * @return UserAuthentication instance
+         * @return User2FAAuthentication instance
          */
         @JvmStatic
-        fun createNewCredentials(discordID: Long): UserAuthentication {
-            val cred = UserAuthentication(discordID)
+        fun createNewCredentials(discordID: Long): User2FAAuthentication {
+            val cred = User2FAAuthentication(discordID)
             credentials[discordID] = cred
             return cred
         }
@@ -36,10 +35,10 @@ class UserAuthentication private constructor(
          * Retrieves user credentials.
          *
          * @param discordID Discord User ID
-         * @return UserAuthentication instance if found, otherwise null
+         * @return User2FAAuthentication instance if found, otherwise null
          */
         @JvmStatic
-        fun getCredentials(discordID: Long): UserAuthentication? {
+        fun getCredentials(discordID: Long): User2FAAuthentication? {
             return credentials[discordID]
         }
     }
