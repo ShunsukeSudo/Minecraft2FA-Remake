@@ -78,6 +78,11 @@ class AuthCommand: ListenerAdapter() {
 
 
     private fun registerCommandAction(event: SlashCommandInteractionEvent) {
+        if(database.authentication().is2FAAuthenticationInformationExists(database.integration().getPlayerID(event.user.idLong))) {
+           event.reply("You have already registered the 2FA!").setEphemeral(true).queue()
+           return
+        }
+
         val credentials = User2FAAuthentication.createNewCredentials(event.user.idLong)
         val totpAuthRegistrationURI = "otpauth://totp/Minecraft2FA:${event.member!!.effectiveName}?secret=${credentials.getSecretKey()}&issuer=$otpIssuerName"
 
