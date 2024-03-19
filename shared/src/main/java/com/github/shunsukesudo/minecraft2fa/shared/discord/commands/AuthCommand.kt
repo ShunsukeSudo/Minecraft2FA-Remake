@@ -150,7 +150,7 @@ class AuthCommand: ListenerAdapter() {
     private fun unRegisterCommandAction(event: SlashCommandInteractionEvent) {
         val secretKey = database.authentication().get2FASecretKey(database.integration().getPlayerID(event.user.idLong))
         if(secretKey == null) {
-            DiscordBot.replyErrorMessage(event, "Secret key is not found in database. Please ask to server administrator.")
+            DiscordBot.replyErrorMessage(event, "Seems you haven't registered the 2FA. Please register 2FA first.")
             return
         }
 
@@ -161,11 +161,42 @@ class AuthCommand: ListenerAdapter() {
     }
 
     private fun unRegisterCommandButtonAction(event: ButtonInteractionEvent) {
+        val totpInput = TextInput.create("$verificationUnRegisterID-input-${event.user.idLong}", "2FA code", TextInputStyle.SHORT)
+            .setMinLength(6)
+            .setMaxLength(6)
+            .setRequired(true)
+            .build()
 
+        val modal = Modal.create("$verificationUnRegisterID-modal-${event.user.idLong}", "Enter 2FA code shown in your authenticator!")
+            .addComponents(ActionRow.of(totpInput))
+            .build()
+
+        event.replyModal(modal).queue()
     }
 
     private fun unRegisterCommandModalAction(event: ModalInteractionEvent) {
+        val inputCode = event.getValue("$verificationUnRegisterID-input-${event.user.idLong}")?.asString?.toInt()
+        if(inputCode == null) {
+            DiscordBot.replyErrorMessage(event, "Failed to get verification code!")
+            return
+        }
 
+        val userID = database.integration().getPlayerID(event.user.idLong)
+        val secretKey = database.authentication().get2FASecretKey(userID)
+        if(secretKey == null) {
+            DiscordBot.replyErrorMessage(event, "Failed to get secret key from database!")
+            return
+        }
+
+        if (!User2FAAuthentication.authorize(secretKey, inputCode)) {
+            event.reply("Invalid code! Please try again.").setEphemeral(true).queue()
+            return
+        }
+
+        when(database.authentication().remove2FAAuthenticationInformation(userID)) {
+            0 -> DiscordBot.replyErrorMessage(event, "There is no 2FA information in database.")
+            else -> event.reply("Your 2FA unregistered successfully!!").setEphemeral(true).queue()
+        }
     }
 
 
