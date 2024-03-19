@@ -1,7 +1,10 @@
 package com.github.shunsukesudo.minecraft2fa.shared.discord.commands
 
+import com.github.shunsukesudo.minecraft2fa.shared.authentication.MCUserAuthentication
 import com.github.shunsukesudo.minecraft2fa.shared.authentication.User2FAAuthentication
 import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
+import com.github.shunsukesudo.minecraft2fa.shared.event.MC2FAEvent
+import com.github.shunsukesudo.minecraft2fa.shared.event.auth.AuthSuccessEvent
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.client.j2se.MatrixToImageWriter
 import com.google.zxing.qrcode.QRCodeWriter
@@ -18,6 +21,7 @@ import net.dv8tion.jda.api.interactions.components.text.TextInputStyle
 import net.dv8tion.jda.api.interactions.modals.Modal
 import net.dv8tion.jda.api.utils.FileUpload
 import java.io.ByteArrayOutputStream
+import java.util.*
 import javax.imageio.ImageIO
 
 class AuthCommand: ListenerAdapter() {
@@ -26,6 +30,7 @@ class AuthCommand: ListenerAdapter() {
         var otpIssuerName = "Minecraft2FA"
         private const val verificationRegisterID = "2fa-verification-register"
         private const val verificationUnRegisterID = "2fa-verification-unregister"
+        private const val verificationVerifyID = "2fa-verification-verify"
 
         init {
             val cmd = SlashCommandBuilder.createCommand("auth", "Authentication command")
@@ -72,6 +77,7 @@ class AuthCommand: ListenerAdapter() {
         when(event.modalId.lowercase()) {
             "$verificationRegisterID-modal-${event.user.idLong}" -> registerCommandModalAction(event)
             "$verificationUnRegisterID-modal-${event.user.idLong}" -> unRegisterCommandModalAction(event)
+            "$verificationVerifyID-modal-${event.user.idLong}" -> verifyCommandModalAction(event)
         }
     }
 
@@ -201,7 +207,52 @@ class AuthCommand: ListenerAdapter() {
 
 
 
-    // This command will reply with button message and handler will be implemented in plugin side discord bot.
     private fun verifyCommandAction(event: SlashCommandInteractionEvent) {
+        val secretKey = database.authentication().get2FASecretKey(database.integration().getPlayerID(event.user.idLong))
+        if(secretKey == null) {
+            DiscordBot.replyErrorMessage(event, "Seems you haven't registered the 2FA. Please register 2FA first.")
+            return
+        }
+
+        val uuid = UUID.fromString(database.integration().getMinecraftUUIDFromDiscordID(event.user.idLong))
+
+        if(MCUserAuthentication.isUserAuthorized(uuid)) {
+            event.reply("You are already in verified session! session will expire in {}")
+            return
+        }
+
+        val totpInput = TextInput.create("$verificationVerifyID-input-${event.user.idLong}", "2FA code", TextInputStyle.SHORT)
+            .setMinLength(6)
+            .setMaxLength(6)
+            .setRequired(true)
+            .build()
+
+        val modal = Modal.create("$verificationVerifyID-modal-${event.user.idLong}", "Enter 2FA code shown in your authenticator!")
+            .addComponents(ActionRow.of(totpInput))
+            .build()
+
+        event.replyModal(modal).queue()
+    }
+
+    private fun verifyCommandModalAction(event: ModalInteractionEvent) {
+        val inputCode = event.getValue("$verificationVerifyID-input-${event.user.idLong}")?.asString?.toInt()
+        if(inputCode == null) {
+            DiscordBot.replyErrorMessage(event, "Failed to get verification code!")
+            return
+        }
+
+        val userID = database.integration().getPlayerID(event.user.idLong)
+        val secretKey = database.authentication().get2FASecretKey(userID)
+        if(secretKey == null) {
+            DiscordBot.replyErrorMessage(event, "Failed to get secret key from database!")
+            return
+        }
+
+        if (!User2FAAuthentication.authorize(secretKey, inputCode)) {
+            event.reply("Invalid code! Please try again.").setEphemeral(true).queue()
+            return
+        }
+
+        MC2FAEvent.callEvent(AuthSuccessEvent(event.user.idLong))
     }
 }
