@@ -120,7 +120,7 @@ class AuthCommand: ListenerAdapter() {
     }
 
     private fun registerCommandModalAction(event: ModalInteractionEvent) {
-        val inputCode = event.getValue("$verificationRegisterID-modal-${event.user.idLong}")?.asString?.toInt()
+        val inputCode = event.getValue("$verificationRegisterID-input-${event.user.idLong}")?.asString?.toInt()
         if(inputCode == null) {
             DiscordBot.replyErrorMessage(event, "Failed to get verification code!")
             return
