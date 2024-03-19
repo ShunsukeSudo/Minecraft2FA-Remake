@@ -112,17 +112,7 @@ class AuthCommand: ListenerAdapter() {
     }
 
     private fun registerCommandButtonAction(event: ButtonInteractionEvent) {
-        val totpInput = TextInput.create("$verificationRegisterID-input-${event.user.idLong}", "2FA code", TextInputStyle.SHORT)
-            .setMinLength(6)
-            .setMaxLength(6)
-            .setRequired(true)
-            .build()
-
-        val modal = Modal.create("$verificationRegisterID-modal-${event.user.idLong}", "Enter 2FA code shown in your authenticator!")
-            .addComponents(ActionRow.of(totpInput))
-            .build()
-
-        event.replyModal(modal).queue()
+        sendModal(event, verificationRegisterID)
     }
 
     private fun registerCommandModalAction(event: ModalInteractionEvent) {
@@ -167,17 +157,7 @@ class AuthCommand: ListenerAdapter() {
     }
 
     private fun unRegisterCommandButtonAction(event: ButtonInteractionEvent) {
-        val totpInput = TextInput.create("$verificationUnRegisterID-input-${event.user.idLong}", "2FA code", TextInputStyle.SHORT)
-            .setMinLength(6)
-            .setMaxLength(6)
-            .setRequired(true)
-            .build()
-
-        val modal = Modal.create("$verificationUnRegisterID-modal-${event.user.idLong}", "Enter 2FA code shown in your authenticator!")
-            .addComponents(ActionRow.of(totpInput))
-            .build()
-
-        event.replyModal(modal).queue()
+        sendModal(event, verificationUnRegisterID)
     }
 
     private fun unRegisterCommandModalAction(event: ModalInteractionEvent) {
@@ -221,17 +201,7 @@ class AuthCommand: ListenerAdapter() {
             return
         }
 
-        val totpInput = TextInput.create("$verificationVerifyID-input-${event.user.idLong}", "2FA code", TextInputStyle.SHORT)
-            .setMinLength(6)
-            .setMaxLength(6)
-            .setRequired(true)
-            .build()
-
-        val modal = Modal.create("$verificationVerifyID-modal-${event.user.idLong}", "Enter 2FA code shown in your authenticator!")
-            .addComponents(ActionRow.of(totpInput))
-            .build()
-
-        event.replyModal(modal).queue()
+        sendModal(event, verificationVerifyID)
     }
 
     private fun verifyCommandModalAction(event: ModalInteractionEvent) {
@@ -254,5 +224,34 @@ class AuthCommand: ListenerAdapter() {
         }
 
         MC2FAEvent.callEvent(AuthSuccessEvent(event.user.idLong))
+    }
+
+
+    private fun sendModal(event: ButtonInteractionEvent, id: String) {
+        val totpInput = getTextInput("$id-input-${event.user.idLong}")
+        val modal = getModal("$id-modal-${event.user.idLong}", totpInput)
+
+        event.replyModal(modal).queue()
+    }
+
+    private fun sendModal(event: SlashCommandInteractionEvent, id: String) {
+        val totpInput = getTextInput("$id-input-${event.user.idLong}")
+        val modal = getModal("$id-modal-${event.user.idLong}", totpInput)
+
+        event.replyModal(modal).queue()
+    }
+
+    private fun getTextInput(id: String): TextInput {
+        return TextInput.create(id, "2FA code", TextInputStyle.SHORT)
+            .setMinLength(6)
+            .setMaxLength(6)
+            .setRequired(true)
+            .build()
+    }
+
+    private fun getModal(id: String, textInput: TextInput): Modal {
+        return Modal.create(id, "Enter 2FA code shown in your authenticator!")
+            .addComponents(ActionRow.of(textInput))
+            .build()
     }
 }
