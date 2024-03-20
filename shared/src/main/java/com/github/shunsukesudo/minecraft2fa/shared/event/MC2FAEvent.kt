@@ -7,12 +7,13 @@ class MC2FAEvent {
     companion object {
 
         private val listeners = mutableListOf<EventListener>()
+        private val eventHandlerAnnotation = EventHandler()
 
         @JvmStatic
         fun <T: GenericEvent> callEvent(event: T) {
             listeners.forEach { listenerClass ->
                 listenerClass::class.memberFunctions.forEach classes@{ func ->
-                    if(!func.annotations.contains(EventHandler())) {
+                    if(!func.annotations.contains(eventHandlerAnnotation)) {
                         return@classes
                     }
                     func.parameters.forEach { param ->
