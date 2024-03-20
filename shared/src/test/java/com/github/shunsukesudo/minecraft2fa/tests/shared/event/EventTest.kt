@@ -27,6 +27,7 @@ class EventTest {
 
 
         println("Calling event")
+        println("executed? $isEventExecuted")
         MC2FAEvent.callEvent(event)
         println("executed? $isEventExecuted")
 
@@ -78,8 +79,7 @@ class EventTest {
     class MC2FATestEventListener: EventListener {
         @EventHandler
         fun testEventReceived(event: MC2FATestEvent) {
-            println("Event called")
-            println("MC2FATestEvent")
+            println("MC2FATestEvent called")
             EventTest.actualTestValue = event.getValue()
             EventTest.actualTestConstructorValue = event.getConstructorValue()
             isEventExecuted = true
