@@ -35,12 +35,18 @@ subprojects {
         implementation("dev.creativition:simplejdautil:0.0.1")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation(kotlin("stdlib-jdk8"))
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
     }
 
     tasks.getByName<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
         archiveBaseName.set("Minecraft2FA-${project.name}")
         archiveClassifier.set("splitted")
         archiveVersion.set(pluginVersion)
+    }
+
+    tasks.getByName<Test>("test") {
+        useJUnitPlatform()
     }
 }
 
