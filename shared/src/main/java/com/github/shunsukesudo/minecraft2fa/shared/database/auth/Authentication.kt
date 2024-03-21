@@ -31,14 +31,22 @@ class Authentication(
      *
      * @param playerID Unique user ID stored in integration table
      * @param secretKey TOTP Secret key
+     * @param backupCodes TOTP BackUp Codes
      */
-    fun add2FAAuthenticationInformation(playerID: Int, secretKey: String){
+    fun add2FAAuthenticationInformation(playerID: Int, secretKey: String, backupCodes: List<Int>){
         transaction(database) {
             val userInfo = IntegrationInfoTable.selectAll().where { IntegrationInfoTable.id eq playerID }.map { it[IntegrationInfoTable.id] }
 
-            AuthInformation.new {
+            val authinfo = AuthInformation.new {
                 this.playerID = userInfo.first()
                 this.secretKey = secretKey
+            }
+
+            backupCodes.forEach {
+                AuthBackCodes.new {
+                    this.authID = authinfo.id
+                    this.backupCodes = it
+                }
             }
         }
     }
@@ -49,13 +57,31 @@ class Authentication(
      *
      * @param playerID Unique user ID stored in integration table
      * @param secretKey TOTP Secret key
+     * @param backupCodes TOTP Backup codes
      * @return Returns updated rows count
      */
-    fun update2FAAuthenticationInformation(playerID: Int, secretKey: String): Int{
+    fun update2FAAuthenticationInformation(playerID: Int, secretKey: String, backupCodes: List<Int>): Int{
         var updated = 0
         transaction(database) {
             updated = AuthInfoTable.update({AuthInfoTable.playerID eq playerID}) {
                 it[AuthInfoTable.secretKey] = secretKey
+            }
+
+            val authID = AuthInfoTable.selectAll().where {
+                AuthInfoTable.playerID eq playerID
+            }.map {
+                it[AuthInfoTable.id]
+            }
+
+            AuthBackupCodeTable.deleteWhere {
+                AuthBackupCodeTable.authID eq authID.first().value
+            }
+
+            backupCodes.forEach {
+                AuthBackCodes.new {
+                    this.authID = authID.first()
+                    this.backupCodes = it
+                }
             }
         }
         return updated
@@ -89,5 +115,23 @@ class Authentication(
             secretKey = AuthInfoTable.selectAll().where { AuthInfoTable.playerID eq playerID }.map { it[AuthInfoTable.secretKey] }
         }
         return if(secretKey.isEmpty()) secretKey.first() else null
+    }
+
+    /**
+     *
+     * Retrieves user 2FA backup codes from database.
+     *
+     * @param authID Unique authID stored in auth info table
+     * @return Backup codes if found, otherwise empty list
+     */
+    fun get2FABackUpCodes(authID: Int): List<Int> {
+        var bc: List<Int> = Collections.emptyList()
+        transaction(database) {
+            bc = AuthBackupCodeTable.selectAll().where { AuthBackupCodeTable.authID eq authID }.map { it[AuthBackupCodeTable.backUpCodes] }
+        }
+        if(bc.isEmpty())
+            return Collections.emptyList()
+
+        return bc
     }
 }

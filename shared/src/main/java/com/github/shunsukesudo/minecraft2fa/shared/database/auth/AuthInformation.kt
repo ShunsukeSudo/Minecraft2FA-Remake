@@ -18,3 +18,15 @@ class AuthInformation(id: EntityID<Int>) : IntEntity(id){
     var playerID by AuthInfoTable.playerID
     var secretKey by AuthInfoTable.secretKey
 }
+
+object AuthBackupCodeTable : IntIdTable("auth_backup_codes") {
+    val authID = reference("auth_id", AuthInfoTable, fkName = "id")
+    val backUpCodes = integer("2fa_backup_code")
+}
+
+class AuthBackCodes(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<AuthBackCodes>(AuthBackupCodeTable)
+
+    var authID by AuthBackupCodeTable.authID
+    var backupCodes by AuthBackupCodeTable.backUpCodes
+}
