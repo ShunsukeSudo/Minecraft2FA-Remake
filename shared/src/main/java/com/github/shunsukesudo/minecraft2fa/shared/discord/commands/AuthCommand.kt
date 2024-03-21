@@ -5,6 +5,7 @@ import com.github.shunsukesudo.minecraft2fa.shared.authentication.User2FAAuthent
 import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
 import com.github.shunsukesudo.minecraft2fa.shared.event.MC2FAEvent
 import com.github.shunsukesudo.minecraft2fa.shared.event.auth.AuthSuccessEvent
+import com.github.shunsukesudo.minecraft2fa.shared.util.QRCodeUtil
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.client.j2se.MatrixToImageWriter
 import com.google.zxing.qrcode.QRCodeWriter
@@ -20,6 +21,7 @@ import net.dv8tion.jda.api.interactions.components.text.TextInput
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle
 import net.dv8tion.jda.api.interactions.modals.Modal
 import net.dv8tion.jda.api.utils.FileUpload
+import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.imageio.ImageIO
@@ -93,9 +95,7 @@ class AuthCommand: ListenerAdapter() {
         val totpAuthRegistrationURI = "otpauth://totp/Minecraft2FA:${event.member!!.effectiveName}?secret=${credentials.getSecretKey()}&issuer=$otpIssuerName"
 
         try {
-            val writer = QRCodeWriter()
-            val bitMatrix = writer.encode(totpAuthRegistrationURI, BarcodeFormat.QR_CODE, 256, 256)
-            val image = MatrixToImageWriter.toBufferedImage(bitMatrix)
+            val image = QRCodeUtil.generateQRCodeFromString(totpAuthRegistrationURI)
             val bos = ByteArrayOutputStream()
             ImageIO.write(image, "png", bos)
             event.reply("Scan QR code with Any TOTP compatible authenticator application or paste secret key to application: `${credentials.getSecretKey()}`.")
