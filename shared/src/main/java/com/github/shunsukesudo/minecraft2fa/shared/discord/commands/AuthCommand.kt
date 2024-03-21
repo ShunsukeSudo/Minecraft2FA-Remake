@@ -122,16 +122,19 @@ class AuthCommand: ListenerAdapter() {
             return
         }
 
-        val secretKey = User2FAAuthentication.getCredentials(event.user.idLong)?.getSecretKey()
-        if(secretKey == null) {
-            DiscordBot.replyErrorMessage(event, "Failed to get secret key!")
+        val credential = User2FAAuthentication.getCredentials(event.user.idLong)
+        if(credential == null) {
+            DiscordBot.replyErrorMessage(event, "Failed to get credential!")
             return
         }
+        val secretKey = credential.getSecretKey()
+        val backUpCodes = credential.getBackupCodes()
 
         if (User2FAAuthentication.authorize(secretKey, inputCode)) {
             database.authentication().add2FAAuthenticationInformation(
                 database.integration().getPlayerID(event.user.idLong),
-                secretKey
+                secretKey,
+                backUpCodes
             )
 
             event.reply("Your 2FA registered successfully!!").setEphemeral(true).queue()
