@@ -2,9 +2,7 @@ package com.github.shunsukesudo.minecraft2fa.shared.authentication
 
 import com.warrenstrange.googleauth.GoogleAuthenticator
 
-class User2FAAuthentication private constructor(
-    private val discordID: Long,
-) {
+class User2FAAuthentication private constructor() {
     companion object {
         private val auth = GoogleAuthenticator()
         private val credentials = HashMap<Long, User2FAAuthentication?>()
@@ -24,7 +22,7 @@ class User2FAAuthentication private constructor(
          */
         @JvmStatic
         fun createNewCredentials(discordID: Long): User2FAAuthentication {
-            val cred = User2FAAuthentication(discordID)
+            val cred = User2FAAuthentication()
             credentials[discordID] = cred
             return cred
         }
@@ -44,7 +42,7 @@ class User2FAAuthentication private constructor(
     }
 
     private val gAuth = GoogleAuthenticator()
-    private var credentials = gAuth.createCredentials(discordID.toString())
+    private var credentials = gAuth.createCredentials()
 
 
     fun getBackupCodes(): List<Int> {
