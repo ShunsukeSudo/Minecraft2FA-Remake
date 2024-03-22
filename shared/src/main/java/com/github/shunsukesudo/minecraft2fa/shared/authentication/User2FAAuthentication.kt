@@ -22,6 +22,9 @@ class User2FAAuthentication private constructor() {
          */
         @JvmStatic
         fun createNewCredentials(discordID: Long): User2FAAuthentication {
+            if(discordID < 0) {
+                throw IllegalArgumentException("Discord user ID must be positive long!")
+            }
             val cred = User2FAAuthentication()
             credentials[discordID] = cred
             return cred
@@ -37,6 +40,9 @@ class User2FAAuthentication private constructor() {
          */
         @JvmStatic
         fun getCredentials(discordID: Long): User2FAAuthentication? {
+            if(discordID < 0) {
+                throw IllegalArgumentException("Discord user ID must be positive long!")
+            }
             return credentials[discordID]
         }
     }
