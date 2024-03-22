@@ -5,6 +5,8 @@ import com.warrenstrange.googleauth.GoogleAuthenticator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import kotlin.random.Random
 
 class User2FAAuthenticationTest {
 
@@ -30,5 +32,49 @@ class User2FAAuthenticationTest {
 
         println("Try authorizing using secret key: $secretKey")
         Assertions.assertEquals(true, User2FAAuthentication.authorize(secretKey, gAuth.getTotpPassword(secretKey)))
+    }
+
+    @Test
+    fun `Test generate credential and get credential from getter then verify code`() {
+        println("=========== Test generate credential and get credential from getter then verify code")
+        println("Generating new credentials")
+        val id = Random(50239523098).nextLong().inv()
+        println("Generated ID: $id")
+        User2FAAuthentication.createNewCredentials(id)
+        val credential = User2FAAuthentication.getCredentials(id)
+        val backUpCodes  = credential?.getBackupCodes()
+        println("Backup codes: $backUpCodes")
+        val secretKey = credential?.getSecretKey().toString()
+        println("Secret key: $secretKey")
+
+        println("Try authorizing using secret key: $secretKey")
+        Assertions.assertEquals(true, User2FAAuthentication.authorize(secretKey, gAuth.getTotpPassword(secretKey)))
+    }
+
+    @Test
+    fun `Test generate credential with invalid ID`() {
+        println("=========== Test generate credential with invalid ID")
+        println("Generating new credentials")
+        val id = Random(50239523098).nextLong()
+        println("Generated ID: $id")
+
+        println("Check throws IllegalArgumentException")
+        assertThrows<IllegalArgumentException> {
+            User2FAAuthentication.createNewCredentials(id)
+        }
+    }
+
+    @Test
+    fun `Test get credential with invalid ID`() {
+        println("=========== Test generate credential with invalid ID")
+        println("Generating new credentials")
+        val id = Random(50239523098).nextLong().inv()
+        println("Generated ID: $id")
+        User2FAAuthentication.createNewCredentials(id)
+
+        println("Check throws IllegalArgumentException")
+        assertThrows<IllegalArgumentException> {
+            User2FAAuthentication.getCredentials(id.inv())
+        }
     }
 }
