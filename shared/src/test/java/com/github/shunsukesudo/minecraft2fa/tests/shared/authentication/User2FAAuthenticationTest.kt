@@ -32,6 +32,8 @@ class User2FAAuthenticationTest {
 
         println("Try authorizing using secret key: $secretKey")
         Assertions.assertEquals(true, User2FAAuthentication.authorize(secretKey, gAuth.getTotpPassword(secretKey)))
+
+        println("Passed.")
     }
 
     @Test
@@ -49,6 +51,8 @@ class User2FAAuthenticationTest {
 
         println("Try authorizing using secret key: $secretKey")
         Assertions.assertEquals(true, User2FAAuthentication.authorize(secretKey, gAuth.getTotpPassword(secretKey)))
+
+        println("Passed.")
     }
 
     @Test
@@ -62,6 +66,8 @@ class User2FAAuthenticationTest {
         assertThrows<IllegalArgumentException> {
             User2FAAuthentication.createNewCredentials(id)
         }
+
+        println("Passed.")
     }
 
     @Test
@@ -76,5 +82,7 @@ class User2FAAuthenticationTest {
         assertThrows<IllegalArgumentException> {
             User2FAAuthentication.getCredentials(id.inv())
         }
+
+        println("Passed.")
     }
 }
