@@ -27,7 +27,7 @@ class MCUserAuthenticationTest {
 
     @Test
     fun `Test - Should return individual value when initialized value accessed`() {
-        println("=========== Test when initialized value accessed")
+        println("=========== Test - Should return individual value when initialized value accessed")
 
         val uuids: MutableList<UUID> = mutableListOf()
         val expectedValues: HashMap<UUID, Boolean> = HashMap()
