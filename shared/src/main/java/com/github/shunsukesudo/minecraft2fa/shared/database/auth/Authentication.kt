@@ -67,20 +67,22 @@ class Authentication(
                 it[AuthInfoTable.secretKey] = secretKey
             }
 
-            val authID = AuthInfoTable.selectAll().where {
+            val authIDTemp = AuthInfoTable.selectAll().where {
                 AuthInfoTable.playerID eq playerID
             }.map {
                 it[AuthInfoTable.id]
             }
 
-            AuthBackupCodeTable.deleteWhere {
-                AuthBackupCodeTable.authID eq authID.first().value
+            val authID = authIDTemp.first()
+
+            val del = AuthBackupCodeTable.deleteWhere {
+                AuthBackupCodeTable.authID eq authID.value
             }
 
             backupCodes.forEach { backUpCode ->
-                AuthBackupCodeTable.insert {
-                    it[AuthBackupCodeTable.authID] = authID.first()
-                    it[AuthBackupCodeTable.backUpCodes] = backUpCode
+                AuthBackupCodeTable.insert { table ->
+                    table[AuthBackupCodeTable.authID] = authID
+                    table[AuthBackupCodeTable.backUpCodes] = backUpCode
                 }
             }
         }
