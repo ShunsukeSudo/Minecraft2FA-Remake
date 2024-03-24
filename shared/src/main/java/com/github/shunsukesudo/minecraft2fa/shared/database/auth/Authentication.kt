@@ -114,7 +114,7 @@ class Authentication(
         transaction(database) {
             secretKey = AuthInfoTable.selectAll().where { AuthInfoTable.playerID eq playerID }.map { it[AuthInfoTable.secretKey] }
         }
-        return if(secretKey.isEmpty()) secretKey.first() else null
+        return if(secretKey.isNotEmpty()) secretKey.first() else null
     }
 
     /**
