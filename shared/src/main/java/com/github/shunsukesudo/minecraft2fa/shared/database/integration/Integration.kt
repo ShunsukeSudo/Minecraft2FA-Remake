@@ -62,9 +62,9 @@ class Integration(
      */
     fun addIntegrationInformation(discordID: Long, minecraftUUID: String) {
         transaction(database) {
-            IntegrationInformation.new {
-                this.discordID = discordID
-                this.minecraftUUID = minecraftUUID
+            IntegrationInfoTable.insert {
+                it[IntegrationInfoTable.discordID] = discordID
+                it[IntegrationInfoTable.minecraftUUID] = minecraftUUID
             }
         }
     }

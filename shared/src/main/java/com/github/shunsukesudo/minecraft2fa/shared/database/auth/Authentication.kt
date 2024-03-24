@@ -37,15 +37,15 @@ class Authentication(
         transaction(database) {
             val userInfo = IntegrationInfoTable.selectAll().where { IntegrationInfoTable.id eq playerID }.map { it[IntegrationInfoTable.id] }
 
-            val authinfo = AuthInformation.new {
-                this.playerID = userInfo.first()
-                this.secretKey = secretKey
+            val authInfo = AuthInfoTable.insertAndGetId {
+                it[AuthInfoTable.playerID] = userInfo.first()
+                it[AuthInfoTable.secretKey] = secretKey
             }
 
-            backupCodes.forEach {
-                AuthBackCodes.new {
-                    this.authID = authinfo.id
-                    this.backupCodes = it
+            backupCodes.forEach { backUpCode ->
+                AuthBackupCodeTable.insert {
+                    it[AuthBackupCodeTable.authID] = authInfo
+                    it[AuthBackupCodeTable.backUpCodes] = backUpCode
                 }
             }
         }
@@ -77,10 +77,10 @@ class Authentication(
                 AuthBackupCodeTable.authID eq authID.first().value
             }
 
-            backupCodes.forEach {
-                AuthBackCodes.new {
-                    this.authID = authID.first()
-                    this.backupCodes = it
+            backupCodes.forEach { backUpCode ->
+                AuthBackupCodeTable.insert {
+                    it[AuthBackupCodeTable.authID] = authID.first()
+                    it[AuthBackupCodeTable.backUpCodes] = backUpCode
                 }
             }
         }
