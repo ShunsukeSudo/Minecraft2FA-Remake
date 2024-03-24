@@ -134,4 +134,28 @@ class Authentication(
 
         return bc
     }
+
+    /**
+     *
+     * Retrieves user auth ID from database.
+     *
+     * @param playerID Unique user ID stored in integration table
+     * @return Auth ID if found, otherwise -1
+     */
+    fun getAuthID(playerID: Int): Int {
+        var authID: List<Int> = emptyList()
+        transaction(database) {
+            authID = AuthInfoTable.selectAll().where {
+                AuthInfoTable.playerID eq playerID
+            }.map {
+                it[AuthInfoTable.playerID].value
+            }
+        }
+
+        return if(authID.isEmpty()) {
+            -1
+        } else {
+            authID.first()
+        }
+    }
 }
