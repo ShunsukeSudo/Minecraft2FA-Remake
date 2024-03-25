@@ -4,13 +4,14 @@ import com.github.shunsukesudo.minecraft2fa.shared.integration.IntegrationManage
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import java.util.*
 import kotlin.random.Random
 
 class IntegrationManagerTest {
 
     companion object {
         private val integration = IntegrationManager
-        private val randomID = Random(50239523098)
+        private val randomID = Random(UUID.randomUUID().toString().filter { it.isDigit() }.take(16).toLong())
     }
 
 

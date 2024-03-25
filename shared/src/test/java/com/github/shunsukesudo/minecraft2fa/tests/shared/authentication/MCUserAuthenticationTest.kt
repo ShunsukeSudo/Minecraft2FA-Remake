@@ -9,7 +9,7 @@ import kotlin.random.Random
 
 class MCUserAuthenticationTest {
 
-    private val random = Random(UUID.randomUUID().toString().filter { it.isDigit() }.toLong())
+    private val random = Random(UUID.randomUUID().toString().filter { it.isDigit() }.take(16).toLong())
 
     @Test
     fun `Test - Should return false when uninitialized value accessed`() {
