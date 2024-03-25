@@ -13,8 +13,12 @@ class Integration(
      *
      * @param discordID Discord User ID
      * @return true if information exists, otherwise false
+     * @throws IllegalArgumentException When negative long in discordID
      */
     fun isIntegrationInformationExists(discordID: Long): Boolean {
+        if(discordID > 0)
+            throw IllegalArgumentException("Discord user ID must be positive long!")
+
         var notExists = true
         transaction(database) {
             notExists = IntegrationInfoTable.selectAll().where { IntegrationInfoTable.discordID eq discordID }.empty()
@@ -42,8 +46,12 @@ class Integration(
      * @param discordID Discord User ID
      * @param minecraftUUID Minecraft User UUID
      * @return true if information exists, otherwise false
+     * @throws IllegalArgumentException When negative long in discordID
      */
     fun isIntegrationInformationExists(discordID: Long, minecraftUUID: String): Boolean {
+        if(discordID > 0)
+            throw IllegalArgumentException("Discord user ID must be positive long!")
+
         var discordIDNotExists = true
         var minecraftUUIDNotExists = true
         transaction(database) {
@@ -59,8 +67,12 @@ class Integration(
      *
      * @param discordID Discord User ID
      * @param minecraftUUID Minecraft User UUID
+     * @throws IllegalArgumentException When negative long in discordID
      */
     fun addIntegrationInformation(discordID: Long, minecraftUUID: String) {
+        if(discordID > 0)
+            throw IllegalArgumentException("Discord user ID must be positive long!")
+
         transaction(database) {
             IntegrationInfoTable.insert {
                 it[IntegrationInfoTable.discordID] = discordID
@@ -90,8 +102,12 @@ class Integration(
      *
      * @param discordID Discord User ID
      * @return Returns deleted rows count
+     * @throws IllegalArgumentException When negative long in discordID
      */
     fun removeIntegrationInformation(discordID: Long): Int {
+        if(discordID > 0)
+            throw IllegalArgumentException("Discord user ID must be positive long!")
+
         var deleted = 0
         transaction(database) {
             deleted = IntegrationInfoTable.deleteWhere { IntegrationInfoTable.discordID eq discordID }
@@ -106,8 +122,12 @@ class Integration(
      * @param discordID Discord User ID
      * @param newMinecraftUUID New Minecraft User UUID to update
      * @return Returns updated rows count
+     * @throws IllegalArgumentException When negative long in discordID
      */
     fun updateIntegrationInformation(discordID: Long, newMinecraftUUID: String): Int {
+        if(discordID > 0)
+            throw IllegalArgumentException("Discord user ID must be positive long!")
+        
         var updated = 0
         transaction(database) {
             updated = IntegrationInfoTable.update({IntegrationInfoTable.discordID eq discordID}) {
@@ -124,8 +144,12 @@ class Integration(
      * @param minecraftUUID Minecraft User UUID
      * @param newDiscordID New Discord ID to update
      * @return Returns updated rows count
+     * @throws IllegalArgumentException When negative long in discordID
      */
     fun updateIntegrationInformation(minecraftUUID: String, newDiscordID: Long): Int {
+        if(newDiscordID > 0)
+            throw IllegalArgumentException("Discord user ID must be positive long!")
+
         var updated = 0
         transaction(database) {
             updated = IntegrationInfoTable.update({IntegrationInfoTable.minecraftUUID eq minecraftUUID}) {
@@ -157,8 +181,12 @@ class Integration(
      *
      * @param discordID Discord User ID
      * @return Unique User ID if found, otherwise -1.
+     * @throws IllegalArgumentException When negative long in discordID
      */
     fun getPlayerID(discordID: Long): Int {
+        if(discordID > 0)
+            throw IllegalArgumentException("Discord user ID must be positive long!")
+
         var playerID: List<Int> = Collections.emptyList()
         transaction(database) {
             playerID = IntegrationInfoTable.selectAll().where {
@@ -176,8 +204,12 @@ class Integration(
      *
      * @param discordID Discord User ID
      * @return Minecraft UUID if found, otherwise null.
+     * @throws IllegalArgumentException When negative long in discordID
      */
     fun getMinecraftUUIDFromDiscordID(discordID: Long): String? {
+        if(discordID > 0)
+            throw IllegalArgumentException("Discord user ID must be positive long!")
+
         var minecraftUUID: List<String> = Collections.emptyList()
         transaction(database) {
             minecraftUUID = IntegrationInfoTable.selectAll().where {
