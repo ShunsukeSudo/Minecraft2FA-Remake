@@ -16,7 +16,7 @@ class Integration(
      * @throws IllegalArgumentException When negative long in discordID
      */
     fun isIntegrationInformationExists(discordID: Long): Boolean {
-        if(discordID > 0)
+        if(discordID < 0L)
             throw IllegalArgumentException("Discord user ID must be positive long!")
 
         var notExists = true
@@ -53,7 +53,7 @@ class Integration(
      * @throws IllegalArgumentException When negative long in discordID
      */
     fun isIntegrationInformationExists(discordID: Long, minecraftUUID: UUID): Boolean {
-        if(discordID > 0)
+        if(discordID < 0L)
             throw IllegalArgumentException("Discord user ID must be positive long!")
 
         var discordIDNotExists = true
@@ -79,7 +79,7 @@ class Integration(
      * @throws IllegalArgumentException When negative long in discordID
      */
     fun addIntegrationInformation(discordID: Long, minecraftUUID: UUID) {
-        if(discordID > 0)
+        if(discordID < 0L)
             throw IllegalArgumentException("Discord user ID must be positive long!")
 
         transaction(database) {
@@ -116,7 +116,7 @@ class Integration(
      * @throws IllegalArgumentException When negative long in discordID
      */
     fun removeIntegrationInformation(discordID: Long): Int {
-        if(discordID > 0)
+        if(discordID < 0L)
             throw IllegalArgumentException("Discord user ID must be positive long!")
 
         var deleted = 0
@@ -136,7 +136,7 @@ class Integration(
      * @throws IllegalArgumentException When negative long in discordID
      */
     fun updateIntegrationInformation(discordID: Long, newMinecraftUUID: UUID): Int {
-        if(discordID > 0)
+        if(discordID < 0L)
             throw IllegalArgumentException("Discord user ID must be positive long!")
         
         var updated = 0
@@ -160,7 +160,7 @@ class Integration(
      * @throws IllegalArgumentException When negative long in discordID
      */
     fun updateIntegrationInformation(minecraftUUID: UUID, newDiscordID: Long): Int {
-        if(newDiscordID > 0)
+        if(newDiscordID < 0L)
             throw IllegalArgumentException("Discord user ID must be positive long!")
 
         var updated = 0
@@ -201,7 +201,7 @@ class Integration(
      * @throws IllegalArgumentException When negative long in discordID
      */
     fun getPlayerID(discordID: Long): Int {
-        if(discordID > 0)
+        if(discordID < 0L)
             throw IllegalArgumentException("Discord user ID must be positive long!")
 
         var playerID: List<Int> = Collections.emptyList()
@@ -224,7 +224,7 @@ class Integration(
      * @throws IllegalArgumentException When negative long in discordID
      */
     fun getMinecraftUUIDFromDiscordID(discordID: Long): String? {
-        if(discordID > 0)
+        if(discordID < 0L)
             throw IllegalArgumentException("Discord user ID must be positive long!")
 
         var minecraftUUID: List<String> = Collections.emptyList()
