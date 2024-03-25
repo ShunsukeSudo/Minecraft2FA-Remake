@@ -16,7 +16,7 @@ import kotlin.random.Random
 class AuthenticationTest {
 
     companion object {
-        private val randomID = Random(UUID.randomUUID().toString().filter { it.isDigit() }.take(16).toLong())
+        private val random = Random(UUID.randomUUID().toString().filter { it.isDigit() }.take(16).toLong())
         private val dbPath = "${File(".").canonicalPath}/test-database.db"
         val database: MC2FADatabase = DatabaseFactory.SQLite.newConnection(dbPath)
 
@@ -38,11 +38,12 @@ class AuthenticationTest {
     fun `Test - User authentication information existence check should return true when registered`() {
         println("=========== Test - User authentication information existence check should return true when registered")
 
-        val fakeDiscordID = randomID.nextLong()
+        var fakeDiscordID = random.nextLong()
+        if(fakeDiscordID < 0) fakeDiscordID = fakeDiscordID.inv()
         println("fakeDiscordID: $fakeDiscordID")
 
         println("Add fake integration information.")
-        database.integration().addIntegrationInformation(fakeDiscordID, UUID.randomUUID().toString())
+        database.integration().addIntegrationInformation(fakeDiscordID, UUID.randomUUID())
 
         val playerID = database.integration().getPlayerID(fakeDiscordID)
         println("playerID on database: $playerID")
@@ -56,7 +57,7 @@ class AuthenticationTest {
         val codes:MutableList<Int> = mutableListOf()
         var randInt: Int
         for(i in 1..5) {
-            randInt = randomID.nextInt()
+            randInt = random.nextInt()
             if(randInt < 0) randInt = randInt.inv()
             codes.add(randInt)
         }
@@ -79,11 +80,12 @@ class AuthenticationTest {
     fun `Test - User backup code should returned when 2FA information registered`() {
         println("=========== Test - User backup code should returned when 2FA information registered")
 
-        val fakeDiscordID = randomID.nextLong()
+        var fakeDiscordID = random.nextLong()
+        if(fakeDiscordID < 0) fakeDiscordID = fakeDiscordID.inv()
         println("fakeDiscordID: $fakeDiscordID")
 
         println("Add fake integration information.")
-        database.integration().addIntegrationInformation(fakeDiscordID, UUID.randomUUID().toString())
+        database.integration().addIntegrationInformation(fakeDiscordID, UUID.randomUUID())
 
         val playerID = database.integration().getPlayerID(fakeDiscordID)
         println("playerID on database: $playerID")
@@ -91,7 +93,7 @@ class AuthenticationTest {
         val codes:MutableList<Int> = mutableListOf()
         var randInt: Int
         for(i in 1..5) {
-            randInt = randomID.nextInt()
+            randInt = random.nextInt()
             if(randInt < 0) randInt = randInt.inv()
             codes.add(randInt)
         }
@@ -113,11 +115,12 @@ class AuthenticationTest {
     fun `Test - Auth information should updated`() {
         println("=========== Test - Auth information should updated")
 
-        val fakeDiscordID = randomID.nextLong()
+        var fakeDiscordID = random.nextLong()
+        if(fakeDiscordID < 0) fakeDiscordID = fakeDiscordID.inv()
         println("fakeDiscordID: $fakeDiscordID")
 
         println("Add fake integration information.")
-        database.integration().addIntegrationInformation(fakeDiscordID, UUID.randomUUID().toString())
+        database.integration().addIntegrationInformation(fakeDiscordID, UUID.randomUUID())
 
         val playerID = database.integration().getPlayerID(fakeDiscordID)
         println("playerID on database: $playerID")
@@ -126,7 +129,7 @@ class AuthenticationTest {
         val codes:MutableList<Int> = mutableListOf()
         var randInt: Int
         for(i in 1..5) {
-            randInt = randomID.nextInt()
+            randInt = random.nextInt()
             if(randInt < 0) randInt = randInt.inv()
             codes.add(randInt)
         }
@@ -150,7 +153,7 @@ class AuthenticationTest {
         
         val newCodes:MutableList<Int> = mutableListOf()
         for(i in 1..5) {
-            randInt = randomID.nextInt()
+            randInt = random.nextInt()
             if(randInt < 0) randInt = randInt.inv()
             newCodes.add(randInt)
         }
