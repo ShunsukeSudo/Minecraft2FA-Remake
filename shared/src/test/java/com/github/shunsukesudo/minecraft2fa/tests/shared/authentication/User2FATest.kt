@@ -1,6 +1,6 @@
 package com.github.shunsukesudo.minecraft2fa.tests.shared.authentication
 
-import com.github.shunsukesudo.minecraft2fa.shared.authentication.User2FAAuthentication
+import com.github.shunsukesudo.minecraft2fa.shared.authentication.User2FA
 import com.warrenstrange.googleauth.GoogleAuthenticator
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeAll
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.assertThrows
 import java.util.*
 import kotlin.random.Random
 
-class User2FAAuthenticationTest {
+class User2FATest {
 
     companion object {
         lateinit var gAuth: GoogleAuthenticator
@@ -27,14 +27,14 @@ class User2FAAuthenticationTest {
     fun `Test generate credential and verify code`() {
         println("=========== Test generate credential and verify code")
         println("Generating new credentials")
-        val credential = User2FAAuthentication.createNewCredentials(0L)
+        val credential = User2FA.createNewCredentials(0L)
         val backUpCodes  = credential.getBackupCodes()
         println("Backup codes: $backUpCodes")
         val secretKey = credential.getSecretKey()
         println("Secret key: $secretKey")
 
         println("Try authorizing using secret key: $secretKey")
-        Assertions.assertEquals(true, User2FAAuthentication.authorize(secretKey, gAuth.getTotpPassword(secretKey)))
+        Assertions.assertEquals(true, User2FA.authorize(secretKey, gAuth.getTotpPassword(secretKey)))
 
         println("Passed.")
     }
@@ -46,15 +46,15 @@ class User2FAAuthenticationTest {
         var id = random.nextLong()
         if(id < 0L) id = id.inv()
         println("Generated ID: $id")
-        User2FAAuthentication.createNewCredentials(id)
-        val credential = User2FAAuthentication.getCredentials(id)
+        User2FA.createNewCredentials(id)
+        val credential = User2FA.getCredentials(id)
         val backUpCodes  = credential?.getBackupCodes()
         println("Backup codes: $backUpCodes")
         val secretKey = credential?.getSecretKey().toString()
         println("Secret key: $secretKey")
 
         println("Try authorizing using secret key: $secretKey")
-        Assertions.assertEquals(true, User2FAAuthentication.authorize(secretKey, gAuth.getTotpPassword(secretKey)))
+        Assertions.assertEquals(true, User2FA.authorize(secretKey, gAuth.getTotpPassword(secretKey)))
 
         println("Passed.")
     }
@@ -69,7 +69,7 @@ class User2FAAuthenticationTest {
 
         println("Check throws IllegalArgumentException")
         assertThrows<IllegalArgumentException> {
-            User2FAAuthentication.createNewCredentials(id)
+            User2FA.createNewCredentials(id)
         }
 
         println("Passed.")
@@ -82,11 +82,11 @@ class User2FAAuthenticationTest {
         var id = random.nextLong()
         if(id < 0L) id = id.inv()
         println("Generated ID: $id")
-        User2FAAuthentication.createNewCredentials(id)
+        User2FA.createNewCredentials(id)
 
         println("Check throws IllegalArgumentException")
         assertThrows<IllegalArgumentException> {
-            User2FAAuthentication.getCredentials(id.inv())
+            User2FA.getCredentials(id.inv())
         }
 
         println("Passed.")

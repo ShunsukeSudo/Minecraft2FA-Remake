@@ -1,14 +1,11 @@
 package com.github.shunsukesudo.minecraft2fa.shared.discord.commands
 
 import com.github.shunsukesudo.minecraft2fa.shared.authentication.MCUserAuthentication
-import com.github.shunsukesudo.minecraft2fa.shared.authentication.User2FAAuthentication
+import com.github.shunsukesudo.minecraft2fa.shared.authentication.User2FA
 import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
 import com.github.shunsukesudo.minecraft2fa.shared.event.MC2FAEvent
 import com.github.shunsukesudo.minecraft2fa.shared.event.auth.AuthSuccessEvent
 import com.github.shunsukesudo.minecraft2fa.shared.util.QRCodeUtil
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.client.j2se.MatrixToImageWriter
-import com.google.zxing.qrcode.QRCodeWriter
 import dev.creativition.simplejdautil.SimpleJDAUtil
 import dev.creativition.simplejdautil.SlashCommandBuilder
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
@@ -21,7 +18,6 @@ import net.dv8tion.jda.api.interactions.components.text.TextInput
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle
 import net.dv8tion.jda.api.interactions.modals.Modal
 import net.dv8tion.jda.api.utils.FileUpload
-import java.awt.image.BufferedImage
 import java.io.ByteArrayOutputStream
 import java.util.*
 import javax.imageio.ImageIO
@@ -91,7 +87,7 @@ class AuthCommand: ListenerAdapter() {
            return
         }
 
-        val credentials = User2FAAuthentication.createNewCredentials(event.user.idLong)
+        val credentials = User2FA.createNewCredentials(event.user.idLong)
         val totpAuthRegistrationURI = "otpauth://totp/Minecraft2FA:${event.member!!.effectiveName}?secret=${credentials.getSecretKey()}&issuer=$otpIssuerName"
 
         try {
@@ -122,7 +118,7 @@ class AuthCommand: ListenerAdapter() {
             return
         }
 
-        val credential = User2FAAuthentication.getCredentials(event.user.idLong)
+        val credential = User2FA.getCredentials(event.user.idLong)
         if(credential == null) {
             DiscordBot.replyErrorMessage(event, "Failed to get credential!")
             return
@@ -130,7 +126,7 @@ class AuthCommand: ListenerAdapter() {
         val secretKey = credential.getSecretKey()
         val backUpCodes = credential.getBackupCodes()
 
-        if (User2FAAuthentication.authorize(secretKey, inputCode)) {
+        if (User2FA.authorize(secretKey, inputCode)) {
             database.authentication().add2FAAuthenticationInformation(
                 database.integration().getPlayerID(event.user.idLong),
                 secretKey,
@@ -177,7 +173,7 @@ class AuthCommand: ListenerAdapter() {
             return
         }
 
-        if (!User2FAAuthentication.authorize(secretKey, inputCode)) {
+        if (!User2FA.authorize(secretKey, inputCode)) {
             event.reply("Invalid code! Please try again.").setEphemeral(true).queue()
             return
         }
@@ -221,7 +217,7 @@ class AuthCommand: ListenerAdapter() {
             return
         }
 
-        if (!User2FAAuthentication.authorize(secretKey, inputCode)) {
+        if (!User2FA.authorize(secretKey, inputCode)) {
             event.reply("Invalid code! Please try again.").setEphemeral(true).queue()
             return
         }
