@@ -79,7 +79,7 @@ class IntegrationManagerTest {
 
     @Test
     fun `Test integration progress check - After integration cancelled`() {
-        println("=========== Test integration progress check - Integrating")
+        println("=========== Test integration progress check - After integration cancelled")
 
         var id = randomID.nextLong()
         if(id < 0) id = id.inv()
