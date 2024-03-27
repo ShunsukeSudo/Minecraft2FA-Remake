@@ -1,6 +1,6 @@
 package com.github.shunsukesudo.minecraft2fa.shared.discord.commands
 
-import com.github.shunsukesudo.minecraft2fa.shared.authentication.MCUserAuthentication
+import com.github.shunsukesudo.minecraft2fa.shared.authentication.MCUserAuth
 import com.github.shunsukesudo.minecraft2fa.shared.authentication.User2FA
 import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
 import com.github.shunsukesudo.minecraft2fa.shared.event.MC2FAEvent
@@ -195,7 +195,7 @@ class AuthCommand: ListenerAdapter() {
 
         val uuid = UUID.fromString(database.integration().getMinecraftUUIDFromDiscordID(event.user.idLong))
 
-        if(MCUserAuthentication.isUserAuthorized(uuid)) {
+        if(MCUserAuth.isUserAuthorized(uuid)) {
             event.reply("You are already in verified session! session will expire in {}")
             return
         }

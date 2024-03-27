@@ -1,13 +1,13 @@
 package com.github.shunsukesudo.minecraft2fa.tests.shared.authentication
 
-import com.github.shunsukesudo.minecraft2fa.shared.authentication.MCUserAuthentication
+import com.github.shunsukesudo.minecraft2fa.shared.authentication.MCUserAuth
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.collections.HashMap
 import kotlin.random.Random
 
-class MCUserAuthenticationTest {
+class MCUserAuthTest {
 
     private val random = Random(UUID.randomUUID().toString().filter { it.isDigit() }.take(16).toLong())
 
@@ -16,8 +16,8 @@ class MCUserAuthenticationTest {
         println("=========== Test - Should return false when uninitialized value accessed")
         val expectedValue = false
 
-        println("Calling: MCUserAuthentication.isUserAuthorized()")
-        val actualValue = MCUserAuthentication.isUserAuthorized(UUID.randomUUID())
+        println("Calling: MCUserAuth.isUserAuthorized()")
+        val actualValue = MCUserAuth.isUserAuthorized(UUID.randomUUID())
 
         println("Expected value: $expectedValue | Actual value: $actualValue")
         Assertions.assertEquals(expectedValue, actualValue)
@@ -41,8 +41,8 @@ class MCUserAuthenticationTest {
         uuids.forEach {
             booleanVal = random.nextBoolean()
             println("Generated UUID: $it")
-            println("Calling: MCUserAuthentication.setUserAuthorizedStatus() for user: $it")
-            MCUserAuthentication.setUserAuthorizedStatus(it, booleanVal)
+            println("Calling: MCUserAuth.setUserAuthorizedStatus() for user: $it")
+            MCUserAuth.setUserAuthorizedStatus(it, booleanVal)
             expectedValues[it] = booleanVal
         }
 
@@ -50,7 +50,7 @@ class MCUserAuthenticationTest {
         var expectedValue: Boolean
 
         uuids.forEach {
-            actualValue = MCUserAuthentication.isUserAuthorized(it)
+            actualValue = MCUserAuth.isUserAuthorized(it)
             expectedValue = expectedValues[it]!!
             println("Expected value: $expectedValue | Actual value: $actualValue")
             Assertions.assertEquals(expectedValue, actualValue)
