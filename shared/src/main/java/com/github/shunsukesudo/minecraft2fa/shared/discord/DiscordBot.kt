@@ -40,7 +40,6 @@ class DiscordBot(
         jdaBuilder.enableIntents(GatewayIntent.MESSAGE_CONTENT)
 
         SimpleJDAUtil.addSearchPath("com.github.shunsukesudo.minecraft2fa.shared.discord.commands.")
-        SimpleJDAUtil.addSearchPath("com.github.shunsukesudo.minecraft2fa.shared.discord.completions.")
 
         jda = SimpleJDAUtil
             .registerListeners(jdaBuilder, ClassLoader.getPlatformClassLoader())
