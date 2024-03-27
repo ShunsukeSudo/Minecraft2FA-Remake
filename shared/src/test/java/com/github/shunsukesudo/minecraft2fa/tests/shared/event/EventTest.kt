@@ -36,13 +36,8 @@ class EventTest {
         println("Expected: $expectedTestConstructorValue | Actual: $actualTestConstructorValue")
         Assertions.assertEquals(expectedTestConstructorValue, actualTestConstructorValue)
 
-    }
 
-    private fun waitForExecution() {
-        while (!isEventExecuted) {
-            Thread.sleep(500)
-            println("Waiting for event to be executed...")
-        }
+        println("Passed.")
     }
 
     companion object {

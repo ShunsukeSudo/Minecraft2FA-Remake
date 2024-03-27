@@ -2,7 +2,7 @@ package com.github.shunsukesudo.minecraft2fa.shared.authentication
 
 import java.util.UUID
 
-object MCUserAuthentication {
+object MCUserAuth {
 
     private val authorizedUser = HashMap<UUID, Boolean>()
 

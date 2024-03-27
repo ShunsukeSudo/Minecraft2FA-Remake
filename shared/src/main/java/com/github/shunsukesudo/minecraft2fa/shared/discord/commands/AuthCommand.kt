@@ -1,13 +1,11 @@
 package com.github.shunsukesudo.minecraft2fa.shared.discord.commands
 
-import com.github.shunsukesudo.minecraft2fa.shared.authentication.MCUserAuthentication
-import com.github.shunsukesudo.minecraft2fa.shared.authentication.User2FAAuthentication
+import com.github.shunsukesudo.minecraft2fa.shared.authentication.MCUserAuth
+import com.github.shunsukesudo.minecraft2fa.shared.authentication.User2FA
 import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
 import com.github.shunsukesudo.minecraft2fa.shared.event.MC2FAEvent
 import com.github.shunsukesudo.minecraft2fa.shared.event.auth.AuthSuccessEvent
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.client.j2se.MatrixToImageWriter
-import com.google.zxing.qrcode.QRCodeWriter
+import com.github.shunsukesudo.minecraft2fa.shared.util.QRCodeUtil
 import dev.creativition.simplejdautil.SimpleJDAUtil
 import dev.creativition.simplejdautil.SlashCommandBuilder
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
@@ -89,13 +87,11 @@ class AuthCommand: ListenerAdapter() {
            return
         }
 
-        val credentials = User2FAAuthentication.createNewCredentials(event.user.idLong)
+        val credentials = User2FA.createNewCredentials(event.user.idLong)
         val totpAuthRegistrationURI = "otpauth://totp/Minecraft2FA:${event.member!!.effectiveName}?secret=${credentials.getSecretKey()}&issuer=$otpIssuerName"
 
         try {
-            val writer = QRCodeWriter()
-            val bitMatrix = writer.encode(totpAuthRegistrationURI, BarcodeFormat.QR_CODE, 256, 256)
-            val image = MatrixToImageWriter.toBufferedImage(bitMatrix)
+            val image = QRCodeUtil.generateQRCodeFromString(totpAuthRegistrationURI)
             val bos = ByteArrayOutputStream()
             ImageIO.write(image, "png", bos)
             event.reply("Scan QR code with Any TOTP compatible authenticator application or paste secret key to application: `${credentials.getSecretKey()}`.")
@@ -122,16 +118,19 @@ class AuthCommand: ListenerAdapter() {
             return
         }
 
-        val secretKey = User2FAAuthentication.getCredentials(event.user.idLong)?.getSecretKey()
-        if(secretKey == null) {
-            DiscordBot.replyErrorMessage(event, "Failed to get secret key!")
+        val credential = User2FA.getCredentials(event.user.idLong)
+        if(credential == null) {
+            DiscordBot.replyErrorMessage(event, "Failed to get credential!")
             return
         }
+        val secretKey = credential.getSecretKey()
+        val backUpCodes = credential.getBackupCodes()
 
-        if (User2FAAuthentication.authorize(secretKey, inputCode)) {
+        if (User2FA.authorize(secretKey, inputCode)) {
             database.authentication().add2FAAuthenticationInformation(
                 database.integration().getPlayerID(event.user.idLong),
-                secretKey
+                secretKey,
+                backUpCodes
             )
 
             event.reply("Your 2FA registered successfully!!").setEphemeral(true).queue()
@@ -174,7 +173,7 @@ class AuthCommand: ListenerAdapter() {
             return
         }
 
-        if (!User2FAAuthentication.authorize(secretKey, inputCode)) {
+        if (!User2FA.authorize(secretKey, inputCode)) {
             event.reply("Invalid code! Please try again.").setEphemeral(true).queue()
             return
         }
@@ -196,7 +195,7 @@ class AuthCommand: ListenerAdapter() {
 
         val uuid = UUID.fromString(database.integration().getMinecraftUUIDFromDiscordID(event.user.idLong))
 
-        if(MCUserAuthentication.isUserAuthorized(uuid)) {
+        if(MCUserAuth.isUserAuthorized(uuid)) {
             event.reply("You are already in verified session! session will expire in {}")
             return
         }
@@ -218,7 +217,7 @@ class AuthCommand: ListenerAdapter() {
             return
         }
 
-        if (!User2FAAuthentication.authorize(secretKey, inputCode)) {
+        if (!User2FA.authorize(secretKey, inputCode)) {
             event.reply("Invalid code! Please try again.").setEphemeral(true).queue()
             return
         }
