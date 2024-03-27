@@ -7,6 +7,7 @@ import com.github.shunsukesudo.minecraft2fa.shared.database.auth.AuthInfoTable
 import com.github.shunsukesudo.minecraft2fa.shared.database.integration.IntegrationInfoTable
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -21,15 +22,19 @@ class AuthenticationTest {
         val database: MC2FADatabase = DatabaseFactory.SQLite.newConnection(dbPath)
 
         init {
-            val dbFile = File(dbPath)
-            if (dbFile.exists())
-                dbFile.delete()
-
             transaction(database.getDatabaseConnection()) {
                 SchemaUtils.createMissingTablesAndColumns(AuthInfoTable)
                 SchemaUtils.createMissingTablesAndColumns(AuthBackupCodeTable)
                 SchemaUtils.createMissingTablesAndColumns(IntegrationInfoTable)
             }
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun removeDBFile() {
+            val dbFile = File(dbPath)
+            if (dbFile.exists())
+                dbFile.delete()
         }
     }
 
