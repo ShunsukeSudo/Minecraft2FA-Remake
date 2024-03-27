@@ -30,22 +30,22 @@ class Authentication(
      * Adds 2FA authenticate information with Player ID, Secret key, Backup codes to database.
      *
      * @param playerID Unique user ID stored in integration table
-     * @param SecretKey TOTP Secret key
-     * @param BackUpCodes TOTP BackUp Codes
+     * @param secretKey TOTP Secret key
+     * @param backupCodes TOTP BackUp Codes
      */
     fun add2FAAuthenticationInformation(playerID: Int, secretKey: String, backupCodes: List<Int>){
         transaction(database) {
             val userInfo = IntegrationInfoTable.selectAll().where { IntegrationInfoTable.id eq playerID }.map { it[IntegrationInfoTable.id] }
 
-            val authinfo = AuthInformation.new {
-                this.playerID = userInfo.first()
-                this.secretKey = secretKey
+            val authInfo = AuthInfoTable.insertAndGetId {
+                it[AuthInfoTable.playerID] = userInfo.first()
+                it[AuthInfoTable.secretKey] = secretKey
             }
 
-            backupCodes.forEach {
-                AuthBackCodes.new {
-                    this.authID = authinfo.playerID
-                    this.backupCodes = it
+            backupCodes.forEach { backUpCode ->
+                AuthBackupCodeTable.insert {
+                    it[AuthBackupCodeTable.authID] = authInfo
+                    it[AuthBackupCodeTable.backUpCodes] = backUpCode
                 }
             }
         }
@@ -56,8 +56,8 @@ class Authentication(
      * Updates 2FA authenticate information with Player ID, Secret key, Backup codes in database.
      *
      * @param playerID Unique user ID stored in integration table
-     * @param SecretKey TOTP Secret key
-     * @param BackUpCodes TOTP BackUp Codes
+     * @param secretKey TOTP Secret key
+     * @param backupCodes TOTP Backup codes
      * @return Returns updated rows count
      */
     fun update2FAAuthenticationInformation(playerID: Int, secretKey: String, backupCodes: List<Int>): Int{
@@ -67,20 +67,22 @@ class Authentication(
                 it[AuthInfoTable.secretKey] = secretKey
             }
 
-            val authID = AuthInfoTable.selectAll().where {
+            val authIDTemp = AuthInfoTable.selectAll().where {
                 AuthInfoTable.playerID eq playerID
             }.map {
                 it[AuthInfoTable.id]
             }
 
-            AuthBackupCodeTable.deleteWhere {
-                AuthBackupCodeTable.authID eq authID.first().value
+            val authID = authIDTemp.first()
+
+            val del = AuthBackupCodeTable.deleteWhere {
+                AuthBackupCodeTable.authID eq authID.value
             }
 
-            backupCodes.forEach {
-                AuthBackCodes.new {
-                    this.authID = authID.first()
-                    this.backupCodes = it
+            backupCodes.forEach { backUpCode ->
+                AuthBackupCodeTable.insert { table ->
+                    table[AuthBackupCodeTable.authID] = authID
+                    table[AuthBackupCodeTable.backUpCodes] = backUpCode
                 }
             }
         }
@@ -114,7 +116,7 @@ class Authentication(
         transaction(database) {
             secretKey = AuthInfoTable.selectAll().where { AuthInfoTable.playerID eq playerID }.map { it[AuthInfoTable.secretKey] }
         }
-        return if(secretKey.isEmpty()) secretKey.first() else null
+        return if(secretKey.isNotEmpty()) secretKey.first() else null
     }
 
     /**
@@ -127,9 +129,35 @@ class Authentication(
     fun get2FABackUpCodes(authID: Int): List<Int> {
         var bc: List<Int> = Collections.emptyList()
         transaction(database) {
-            bc = AuthBackupCodeTable.selectAll().where { AuthBackupCodeTable.authID eq authID }.map { it[AuthBackupCodeTable.backupCode] }
+            bc = AuthBackupCodeTable.selectAll().where { AuthBackupCodeTable.authID eq authID }.map { it[AuthBackupCodeTable.backUpCodes] }
         }
+        if(bc.isEmpty())
+            return Collections.emptyList()
 
         return bc
+    }
+
+    /**
+     *
+     * Retrieves user auth ID from database.
+     *
+     * @param playerID Unique user ID stored in integration table
+     * @return Auth ID if found, otherwise -1
+     */
+    fun getAuthID(playerID: Int): Int {
+        var authID: List<Int> = emptyList()
+        transaction(database) {
+            authID = AuthInfoTable.selectAll().where {
+                AuthInfoTable.playerID eq playerID
+            }.map {
+                it[AuthInfoTable.playerID].value
+            }
+        }
+
+        return if(authID.isEmpty()) {
+            -1
+        } else {
+            authID.first()
+        }
     }
 }

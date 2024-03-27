@@ -4,6 +4,7 @@ import com.github.shunsukesudo.minecraft2fa.shared.database.auth.Authentication
 import com.github.shunsukesudo.minecraft2fa.shared.database.integration.Integration
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
+import java.sql.Connection
 
 internal class SQLiteDatabase(
     databaseName: String,
@@ -12,6 +13,10 @@ internal class SQLiteDatabase(
     private val database = Database.connect(url = "jdbc:sqlite://$databaseName", driver = "org.sqlite.JDBC")
     private val authentication = Authentication(this.database)
     private val integration = Integration(this.database)
+
+    init {
+        TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
+    }
 
     override fun authentication(): Authentication {
         return this.authentication
