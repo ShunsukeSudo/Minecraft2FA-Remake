@@ -4,18 +4,18 @@ import java.util.UUID
 
 object MCUserAuth {
 
-    private val authorizedUser = HashMap<UUID, Boolean>()
+    private val authorizedUser = HashMap<UUID, MCUserAuthStatus>()
 
     /**
      *
      * Sets the user authorization status.
      *
      * @param minecraftUUID UUID of Player
-     * @param isAuthorized authorization status
+     * @param authStatus authorization status
      */
     @JvmStatic
-    fun setUserAuthorizedStatus(minecraftUUID: UUID ,isAuthorized: Boolean) {
-        authorizedUser[minecraftUUID] = isAuthorized
+    fun setUserAuthorizationStatus(minecraftUUID: UUID, authStatus: MCUserAuthStatus) {
+        authorizedUser[minecraftUUID] = authStatus
     }
 
     /**
@@ -23,14 +23,10 @@ object MCUserAuth {
      * Checks user is authorized.
      *
      * @param minecraftUUID UUID of Player
-     * @return true if authorized, otherwise false
+     * @return Returns MCUserAuthStatus enum
      */
     @JvmStatic
-    fun isUserAuthorized(minecraftUUID: UUID): Boolean{
-        // Return value of `authorizedUser[key]` is `Boolean?` not `Boolean` and need a null check so use when.
-        return when(authorizedUser[minecraftUUID]) {
-            true -> true
-            else -> false
-        }
+    fun getUserAuthorizationStatus(minecraftUUID: UUID): MCUserAuthStatus{
+        return authorizedUser[minecraftUUID] ?: MCUserAuthStatus.NOT_AUTHORIZED
     }
 }

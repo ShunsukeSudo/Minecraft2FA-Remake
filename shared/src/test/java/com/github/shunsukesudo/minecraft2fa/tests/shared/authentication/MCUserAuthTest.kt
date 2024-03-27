@@ -1,6 +1,7 @@
 package com.github.shunsukesudo.minecraft2fa.tests.shared.authentication
 
 import com.github.shunsukesudo.minecraft2fa.shared.authentication.MCUserAuth
+import com.github.shunsukesudo.minecraft2fa.shared.authentication.MCUserAuthStatus
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -14,10 +15,10 @@ class MCUserAuthTest {
     @Test
     fun `Test - Should return false when uninitialized value accessed`() {
         println("=========== Test - Should return false when uninitialized value accessed")
-        val expectedValue = false
+        val expectedValue = MCUserAuthStatus.NOT_AUTHORIZED
 
         println("Calling: MCUserAuth.isUserAuthorized()")
-        val actualValue = MCUserAuth.isUserAuthorized(UUID.randomUUID())
+        val actualValue = MCUserAuth.getUserAuthorizationStatus(UUID.randomUUID())
 
         println("Expected value: $expectedValue | Actual value: $actualValue")
         Assertions.assertEquals(expectedValue, actualValue)
@@ -30,27 +31,27 @@ class MCUserAuthTest {
         println("=========== Test - Should return individual value when initialized value accessed")
 
         val uuids: MutableList<UUID> = mutableListOf()
-        val expectedValues: HashMap<UUID, Boolean> = HashMap()
+        val expectedValues: HashMap<UUID, MCUserAuthStatus> = HashMap()
 
         for(i in 1..5) {
             uuids.add(UUID.randomUUID())
         }
 
-        var booleanVal: Boolean
+        var authorizedStatus: MCUserAuthStatus
 
         uuids.forEach {
-            booleanVal = random.nextBoolean()
+            authorizedStatus = MCUserAuthStatus.values().random()
             println("Generated UUID: $it")
             println("Calling: MCUserAuth.setUserAuthorizedStatus() for user: $it")
-            MCUserAuth.setUserAuthorizedStatus(it, booleanVal)
-            expectedValues[it] = booleanVal
+            MCUserAuth.setUserAuthorizationStatus(it, authorizedStatus)
+            expectedValues[it] = authorizedStatus
         }
 
-        var actualValue: Boolean
-        var expectedValue: Boolean
+        var actualValue: MCUserAuthStatus
+        var expectedValue: MCUserAuthStatus
 
         uuids.forEach {
-            actualValue = MCUserAuth.isUserAuthorized(it)
+            actualValue = MCUserAuth.getUserAuthorizationStatus(it)
             expectedValue = expectedValues[it]!!
             println("Expected value: $expectedValue | Actual value: $actualValue")
             Assertions.assertEquals(expectedValue, actualValue)
