@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  proxy-backend-server:
+    image: itzg/minecraft-server
+    # Expose port because used for standalone backend server testing.
+    ports:
+      - "25560:25565"
+
+    environment:
+      TYPE: "PURPUR"
+      VERSION: "1.20.2"
+      EULA: "true"
+      OPS: "faketuna"
+      TZ: "Asia/Tokyo"
+      ONLINE_MODE: "FALSE"
+      SERVER_NAME: "Backend-server"
+
+    restart: unless-stopped
+    volumes:
+      - ./backend-server:/data
+
+  proxy:
+    image: itzg/bungeecord
+    ports:
+      - "25565:25577"
+
+    environment:
+      TYPE: "WATERFALL"
+      CFG_MOTD: "Docker"
+
+    volumes:
+      - ./proxy:/server
+  
+
