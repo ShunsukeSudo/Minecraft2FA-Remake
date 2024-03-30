@@ -6,5 +6,8 @@ data class AuthenticationConfiguration(
     init {
         if(sessionExpireTimeInSeconds < 0)
             throw IllegalArgumentException("sessionExpireTimeInSeconds should not be negative value! $sessionExpireTimeInSeconds")
+
+        if(sessionExpireTimeInSeconds == 0)
+            throw IllegalArgumentException("sessionExpireTimeInSeconds should greater than 1!")
     }
 }
