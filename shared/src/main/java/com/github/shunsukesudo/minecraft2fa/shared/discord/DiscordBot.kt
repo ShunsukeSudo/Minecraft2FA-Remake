@@ -37,6 +37,8 @@ class DiscordBot(
     val jda: JDA
 
     init {
+        db = database
+
         val jdaBuilder = JDABuilder.createDefault(discordBotConfiguration.botToken)
 
         jdaBuilder.enableIntents(GatewayIntent.MESSAGE_CONTENT)
@@ -48,7 +50,5 @@ class DiscordBot(
             .build()
 
         SimpleJDAUtil.registerSlashCommands(jda)
-
-        db = database
     }
 }
