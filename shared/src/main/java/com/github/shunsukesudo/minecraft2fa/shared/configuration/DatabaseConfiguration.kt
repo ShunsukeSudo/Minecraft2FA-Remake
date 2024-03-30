@@ -16,10 +16,6 @@ data class DatabaseConfiguration(
                 if(user.isEmpty()) {
                     throw IllegalArgumentException("User is should not be empty in $databaseType database")
                 }
-
-                if(password.isEmpty()) {
-                    throw IllegalArgumentException("Password is should not empty in $databaseType database")
-                }
             }
 
             DatabaseType.SQLITE -> {
