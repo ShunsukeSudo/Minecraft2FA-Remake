@@ -1,21 +1,17 @@
 package com.github.shunsukesudo.minecraft2fa.shared.database
 
+import com.github.shunsukesudo.minecraft2fa.shared.configuration.DatabaseConfiguration
+
 object DatabaseFactory {
     object SQLite {
-        fun newConnection(databaseName: String): MC2FADatabase {
-            if(!databaseName.endsWith(".db"))
-                return SQLiteDatabase(databaseName.plus(".db"))
-
-            return SQLiteDatabase(databaseName)
+        fun newConnection(databaseConfiguration: DatabaseConfiguration): MC2FADatabase {
+            return SQLiteDatabase(databaseConfiguration)
         }
     }
 
     object MySQL {
-        fun newConnection(address: String, databaseName: String, properties: String, user: String, password: String): MC2FADatabase {
-            return MySQLDatabase(address, databaseName, properties, user, password)
-        }
-        fun newConnection(address: String, databaseName: String, user: String, password: String): MC2FADatabase {
-            return MySQLDatabase(address, databaseName, "", user, password)
+        fun newConnection(databaseConfiguration: DatabaseConfiguration): MC2FADatabase {
+            return MySQLDatabase(databaseConfiguration)
         }
     }
 }
