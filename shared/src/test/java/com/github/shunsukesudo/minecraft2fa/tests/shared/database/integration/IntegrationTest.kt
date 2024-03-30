@@ -1,5 +1,7 @@
 package com.github.shunsukesudo.minecraft2fa.tests.shared.database.integration
 
+import com.github.shunsukesudo.minecraft2fa.shared.configuration.DatabaseConfiguration
+import com.github.shunsukesudo.minecraft2fa.shared.configuration.DatabaseType
 import com.github.shunsukesudo.minecraft2fa.shared.database.DatabaseFactory
 import com.github.shunsukesudo.minecraft2fa.shared.database.MC2FADatabase
 import com.github.shunsukesudo.minecraft2fa.shared.database.integration.IntegrationInfoTable
@@ -17,7 +19,8 @@ class IntegrationTest {
     companion object {
         private val random = Random(UUID.randomUUID().toString().filter { it.isDigit() }.take(16).toLong())
         private val dbPath = "${File(".").canonicalPath}/test-database.db"
-        val database: MC2FADatabase = DatabaseFactory.SQLite.newConnection(dbPath)
+        private val dbConfig = DatabaseConfiguration(DatabaseType.SQLITE, dbPath, "", "")
+        val database: MC2FADatabase = DatabaseFactory.SQLite.newConnection(dbConfig)
 
         init {
             transaction(database.getDatabaseConnection()) {
