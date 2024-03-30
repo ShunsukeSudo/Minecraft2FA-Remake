@@ -3,7 +3,7 @@ package com.github.shunsukesudo.minecraft2fa.shared.configuration
 data class DatabaseConfiguration(
     val databaseType: DatabaseType,
     val address: String,
-    val user: String,
+    val userName: String,
     val password: String
 ) {
     init {
@@ -12,7 +12,7 @@ data class DatabaseConfiguration(
 
         when(databaseType) {
             DatabaseType.MYSQL -> {
-                if(user.isEmpty()) {
+                if(userName.isEmpty()) {
                     throw IllegalArgumentException("User is should not be empty in $databaseType database")
                 }
             }
