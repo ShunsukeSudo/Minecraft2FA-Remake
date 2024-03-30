@@ -1,5 +1,7 @@
 package com.github.shunsukesudo.minecraft2fa.shared.database
 
+import com.github.shunsukesudo.minecraft2fa.shared.configuration.DatabaseConfiguration
+import com.github.shunsukesudo.minecraft2fa.shared.configuration.PluginConfiguration
 import com.github.shunsukesudo.minecraft2fa.shared.database.auth.Authentication
 import com.github.shunsukesudo.minecraft2fa.shared.database.integration.Integration
 import org.jetbrains.exposed.sql.Database
@@ -7,10 +9,13 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import java.sql.Connection
 
 internal class SQLiteDatabase(
-    databaseName: String,
+    databaseConfiguration: DatabaseConfiguration,
 ) : MC2FADatabase {
 
-    private val database = Database.connect(url = "jdbc:sqlite://$databaseName", driver = "org.sqlite.JDBC")
+    private val database = Database.connect(
+        url = "jdbc:sqlite://${databaseConfiguration.address}",
+        driver = "org.sqlite.JDBC"
+    )
     private val authentication = Authentication(this.database)
     private val integration = Integration(this.database)
 

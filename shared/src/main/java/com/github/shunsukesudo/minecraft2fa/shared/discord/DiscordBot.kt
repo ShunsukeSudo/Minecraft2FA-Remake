@@ -1,5 +1,7 @@
 package com.github.shunsukesudo.minecraft2fa.shared.discord
 
+import com.github.shunsukesudo.minecraft2fa.shared.configuration.DiscordBotConfiguration
+import com.github.shunsukesudo.minecraft2fa.shared.configuration.PluginConfiguration
 import com.github.shunsukesudo.minecraft2fa.shared.database.MC2FADatabase
 import dev.creativition.simplejdautil.SimpleJDAUtil
 import net.dv8tion.jda.api.JDA
@@ -9,7 +11,7 @@ import net.dv8tion.jda.api.events.interaction.command.GenericCommandInteractionE
 import net.dv8tion.jda.api.requests.GatewayIntent
 
 class DiscordBot(
-    discordBotToken: String,
+    discordBotConfiguration: DiscordBotConfiguration,
     database: MC2FADatabase
 ) {
 
@@ -35,7 +37,7 @@ class DiscordBot(
     val jda: JDA
 
     init {
-        val jdaBuilder = JDABuilder.createDefault(discordBotToken)
+        val jdaBuilder = JDABuilder.createDefault(discordBotConfiguration.botToken)
 
         jdaBuilder.enableIntents(GatewayIntent.MESSAGE_CONTENT)
 
