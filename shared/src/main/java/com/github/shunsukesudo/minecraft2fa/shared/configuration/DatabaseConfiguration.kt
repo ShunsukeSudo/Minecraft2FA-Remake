@@ -10,7 +10,7 @@ data class DatabaseConfiguration(
         when(databaseType) {
             DatabaseType.MYSQL -> {
                 if(address.isEmpty()) {
-                    throw IllegalStateException("Address is should not be empty.")
+                    throw IllegalArgumentException("Address is should not be empty.")
                 }
 
                 if(user.isEmpty()) {
@@ -24,7 +24,7 @@ data class DatabaseConfiguration(
 
             DatabaseType.SQLITE -> {
                 if(address.isEmpty()) {
-                    throw IllegalStateException("Address is should not be empty.")
+                    throw IllegalArgumentException("Address is should not be empty.")
                 }
             }
 
