@@ -19,10 +19,6 @@ data class DatabaseConfiguration(
 
             DatabaseType.SQLITE -> {
             }
-
-            else -> {
-                throw IllegalArgumentException("Unknown database type specified. Type: $databaseType")
-            }
         }
     }
 }
