@@ -7,21 +7,17 @@ data class DatabaseConfiguration(
     val password: String
 ) {
     init {
+        if(address.isEmpty())
+            throw IllegalArgumentException("Address is should not be empty.")
+
         when(databaseType) {
             DatabaseType.MYSQL -> {
-                if(address.isEmpty()) {
-                    throw IllegalArgumentException("Address is should not be empty.")
-                }
-
                 if(user.isEmpty()) {
                     throw IllegalArgumentException("User is should not be empty in $databaseType database")
                 }
             }
 
             DatabaseType.SQLITE -> {
-                if(address.isEmpty()) {
-                    throw IllegalArgumentException("Address is should not be empty.")
-                }
             }
 
             else -> {
