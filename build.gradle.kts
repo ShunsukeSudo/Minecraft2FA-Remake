@@ -53,6 +53,8 @@ subprojects {
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+    implementation(project(path = ":waterfall", configuration = "shadow"))
+    implementation(project(path = ":paper", configuration = "shadow"))
 }
 
 tasks.getByName<Test>("test") {

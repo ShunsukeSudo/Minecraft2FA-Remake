@@ -8,6 +8,7 @@ dependencies {
 }
 
 bungee {
+    name = rootProject.name
     main = "${project.ext["groupID"]}.minecraft2fa.waterfall.Minecraft2FA"
     author = project.ext["authorName"].toString()
     version = project.ext["pluginVersion"].toString()

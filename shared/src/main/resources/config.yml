@@ -1,0 +1,12 @@
+discord:
+  bot_token: 'XXXXXXXXXXXXXXXXXXXXXX'
+
+database:
+  type: 'SQLITE'
+  # If you chose SQLITE as database type, address will be file name and stored into plugin folder.
+  address: 'database'
+  username: ''
+  password: ''
+
+totp_auth:
+  sessionExpireTimeInSeconds: 10
