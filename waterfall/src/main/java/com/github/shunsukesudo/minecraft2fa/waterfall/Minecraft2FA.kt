@@ -57,7 +57,11 @@ class Minecraft2FA: Plugin() {
         val sessionExpireTimeInSeconds = configuration.getInt("totp_auth.sessionExpireTimeInSeconds", -1)
 
         val databaseType = DatabaseType.valueOf(configuration.getString("database.type"))
-        val databaseAddress = configuration.getString("database.address")
+        var databaseAddress = configuration.getString("database.address")
+        if(databaseType == DatabaseType.SQLITE) {
+            databaseAddress = "${plugin.dataFolder.canonicalPath}/$databaseAddress"
+        }
+
         val databaseUserName = configuration.getString("database.username")
         val databasePassword = configuration.getString("database.password")
 
