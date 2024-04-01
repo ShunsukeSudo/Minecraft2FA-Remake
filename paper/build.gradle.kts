@@ -8,6 +8,7 @@ dependencies {
 }
 
 bukkit {
+    name = rootProject.name
     main =  "${project.ext["groupID"]}.minecraft2fa.paper.Minecraft2FA"
 
     apiVersion = "1.13"
