@@ -20,7 +20,7 @@ class IntegrationTest {
         private val random = Random(UUID.randomUUID().toString().filter { it.isDigit() }.take(16).toLong())
         private val dbPath = "${File(".").canonicalPath}/test-database.db"
         private val dbConfig = DatabaseConfiguration(DatabaseType.SQLITE, dbPath, "", "")
-        val database: MC2FADatabase = DatabaseFactory.SQLite.newConnection(dbConfig)
+        val database: MC2FADatabase = DatabaseFactory.newConnection(dbConfig)
 
         init {
             transaction(database.getDatabaseConnection()) {
