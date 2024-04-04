@@ -4,6 +4,7 @@ import com.github.shunsukesudo.minecraft2fa.shared.configuration.*
 import com.github.shunsukesudo.minecraft2fa.shared.database.DatabaseFactory
 import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
 import net.dv8tion.jda.api.exceptions.InvalidTokenException
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
 class Minecraft2FA: JavaPlugin() {
@@ -20,6 +21,8 @@ class Minecraft2FA: JavaPlugin() {
         plugin = this
         val pluginConfiguration: PluginConfiguration
 
+        val isBungeeEnabled = Bukkit.spigot().config.getBoolean("settings.bungeecord")
+
         try {
             pluginConfiguration = parseConfig()
         } catch (e: Exception) {
@@ -29,15 +32,21 @@ class Minecraft2FA: JavaPlugin() {
             return
         }
 
+
+
         val databaseConnection = DatabaseFactory.newConnection(pluginConfiguration.databaseConfiguration)
-        try {
-            DiscordBot(pluginConfiguration.discordBotConfiguration, databaseConnection)
-        } catch (e: InvalidTokenException) {
-            slF4JLogger.error("Provided token is invalid! Check your config!")
-            e.printStackTrace()
-            onDisable()
-            return
+
+        if(!isBungeeEnabled) {
+            try {
+                DiscordBot(pluginConfiguration.discordBotConfiguration, databaseConnection)
+            } catch (e: InvalidTokenException) {
+                slF4JLogger.error("Provided token is invalid! Check your config!")
+                e.printStackTrace()
+                onDisable()
+                return
+            }
         }
+
     }
 
     override fun onDisable() {
