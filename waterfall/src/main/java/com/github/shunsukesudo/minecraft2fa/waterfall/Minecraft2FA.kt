@@ -2,7 +2,9 @@ package com.github.shunsukesudo.minecraft2fa.waterfall
 
 import com.github.shunsukesudo.minecraft2fa.shared.configuration.*
 import com.github.shunsukesudo.minecraft2fa.shared.database.DatabaseFactory
+import com.github.shunsukesudo.minecraft2fa.shared.database.MC2FADatabase
 import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
+import com.github.shunsukesudo.minecraft2fa.waterfall.commands.MC2FACommand
 import net.dv8tion.jda.api.exceptions.InvalidTokenException
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.config.ConfigurationProvider
@@ -15,9 +17,14 @@ class Minecraft2FA: Plugin() {
 
     companion object {
         private lateinit var plugin: Plugin
+        private lateinit var database: MC2FADatabase
 
         fun getInstance(): Plugin {
             return plugin
+        }
+
+        fun getDatabase(): MC2FADatabase {
+            return database
         }
     }
 
@@ -34,15 +41,17 @@ class Minecraft2FA: Plugin() {
             return
         }
 
-        val databaseConnection = DatabaseFactory.newConnection(pluginConfiguration.databaseConfiguration)
+        database = DatabaseFactory.newConnection(pluginConfiguration.databaseConfiguration)
         try {
-            DiscordBot(pluginConfiguration.discordBotConfiguration, databaseConnection)
+            DiscordBot(pluginConfiguration.discordBotConfiguration, database)
         } catch (e: InvalidTokenException) {
             slF4JLogger.error("Provided token is invalid! Check your config!")
             e.printStackTrace()
             onDisable()
             return
         }
+
+        registerCommands()
     }
 
     override fun onDisable() {
@@ -103,5 +112,9 @@ class Minecraft2FA: Plugin() {
             val inputStream = getResourceAsStream("config.yml")
             inputStream.transferTo(outputStream)
         }
+    }
+
+    private fun registerCommands() {
+        this.proxy.pluginManager.registerCommand(this, MC2FACommand())
     }
 }
