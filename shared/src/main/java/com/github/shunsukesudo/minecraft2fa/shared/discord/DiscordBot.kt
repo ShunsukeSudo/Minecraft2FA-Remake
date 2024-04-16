@@ -48,6 +48,7 @@ class DiscordBot(
         jda = SimpleJDAUtil
             .registerListeners(jdaBuilder, ClassLoader.getPlatformClassLoader())
             .build()
+            .awaitReady()
 
         SimpleJDAUtil.registerSlashCommands(jda)
     }

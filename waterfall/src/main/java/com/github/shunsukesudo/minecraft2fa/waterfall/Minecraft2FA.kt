@@ -2,31 +2,44 @@ package com.github.shunsukesudo.minecraft2fa.waterfall
 
 import com.github.shunsukesudo.minecraft2fa.shared.configuration.*
 import com.github.shunsukesudo.minecraft2fa.shared.database.DatabaseFactory
+import com.github.shunsukesudo.minecraft2fa.shared.database.MC2FADatabase
 import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
+import com.github.shunsukesudo.minecraft2fa.shared.minecraft.IPlugin
+import com.github.shunsukesudo.minecraft2fa.shared.minecraft.SharedPlugin
 import net.dv8tion.jda.api.exceptions.InvalidTokenException
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.config.ConfigurationProvider
 import net.md_5.bungee.config.YamlConfiguration
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.math.log
 
-class Minecraft2FA: Plugin() {
+class Minecraft2FA: Plugin(), IPlugin {
 
-    companion object {
-        private lateinit var plugin: Plugin
+    companion object{
+        private lateinit var pluginConfig: PluginConfiguration
+        private lateinit var pluginDatabase: MC2FADatabase
 
-        fun getInstance(): Plugin {
-            return plugin
+        fun getPluginConfig(): PluginConfiguration {
+            return pluginConfig
+        }
+
+        fun getDatabase(): MC2FADatabase {
+            return pluginDatabase
         }
     }
 
-    override fun onEnable() {
-        plugin = this
-        val pluginConfiguration: PluginConfiguration
+    init {
+        SharedPlugin.plugin = this
+    }
 
+    override val pluginConfiguration: PluginConfiguration
+        get() = getPluginConfig()
+    override val database: MC2FADatabase
+        get() = getDatabase()
+
+    override fun onEnable() {
         try {
-            pluginConfiguration = parseConfig()
+            pluginConfig = parseConfig()
         } catch (e: Exception) {
             slF4JLogger.error("Plugin failed to start due to error!")
             e.printStackTrace()
@@ -35,6 +48,8 @@ class Minecraft2FA: Plugin() {
         }
 
         val databaseConnection = DatabaseFactory.newConnection(pluginConfiguration.databaseConfiguration)
+        pluginDatabase = databaseConnection
+
         try {
             DiscordBot(pluginConfiguration.discordBotConfiguration, databaseConnection)
         } catch (e: InvalidTokenException) {
@@ -45,11 +60,6 @@ class Minecraft2FA: Plugin() {
         }
     }
 
-    override fun onDisable() {
-
-    }
-
-
     private fun parseConfig(): PluginConfiguration {
         makeConfig()
         val configuration = ConfigurationProvider.getProvider(YamlConfiguration::class.java).load(File(dataFolder, "config.yml"))
@@ -59,7 +69,7 @@ class Minecraft2FA: Plugin() {
         val databaseType = DatabaseType.valueOf(configuration.getString("database.type"))
         var databaseAddress = configuration.getString("database.address")
         if(databaseType == DatabaseType.SQLITE) {
-            databaseAddress = "${plugin.dataFolder.canonicalPath}/$databaseAddress"
+            databaseAddress = "${dataFolder.canonicalPath}/$databaseAddress"
         }
 
         val databaseUserName = configuration.getString("database.username")
