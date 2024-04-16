@@ -34,6 +34,8 @@ subprojects {
         implementation("net.dv8tion:JDA:5.0.0-beta.21")
         implementation("dev.creativition:simplejdautil:0.0.1")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
+        implementation("net.kyori:adventure-platform-bungeecord:4.3.0")
+        implementation("net.kyori:adventure-platform-bukkit:4.3.0")
         implementation(kotlin("stdlib-jdk8"))
         testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
