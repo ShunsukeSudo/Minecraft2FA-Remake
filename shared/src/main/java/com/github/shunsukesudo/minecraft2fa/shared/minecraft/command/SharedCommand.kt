@@ -6,6 +6,6 @@ interface SharedCommand {
     val commandName: String
     val commandAliases: Array<String>
     val permission: String
-    fun execute(sender: SharedPlayer, args: Array<String>)
+    fun execute(sender: SharedPlayer, args: Array<String>): Boolean
     fun suggest(sender: SharedPlayer, args: Array<String>): List<String>
 }

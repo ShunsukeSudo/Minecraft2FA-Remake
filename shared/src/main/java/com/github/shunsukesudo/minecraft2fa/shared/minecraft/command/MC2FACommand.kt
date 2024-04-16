@@ -12,25 +12,26 @@ class MC2FACommand: SharedCommand {
     override val commandAliases = arrayOf("")
     override val permission = "mc2fa.command"
 
-    override fun execute(sender: SharedPlayer, args: Array<String>) {
+    override fun execute(sender: SharedPlayer, args: Array<String>): Boolean {
         if(args.isEmpty())
-            return
+            return false
 
         if(args[0].lowercase() == "connect") {
-            subCommandConnect(sender, args)
+            return subCommandConnect(sender, args)
         }
 
         sender.sendMessage(ErrorMessages.thisArgumentsDoesNotExists(args[0]).getMessageWithPrefix())
+        return true
     }
 
     override fun suggest(sender: SharedPlayer, args: Array<String>): List<String> {
         return emptyList()
     }
 
-    private fun subCommandConnect(sender: SharedPlayer, args: Array<String>) {
+    private fun subCommandConnect(sender: SharedPlayer, args: Array<String>): Boolean {
         if(args.size < 2) {
             sender.sendMessage(ErrorMessages.notEnoughArguments(2).getMessageWithPrefix())
-            return
+            return false
         }
 
         val token = args[1]
@@ -46,9 +47,10 @@ class MC2FACommand: SharedCommand {
         } catch (e: Exception) {
             e.printStackTrace()
             sender.sendMessage(Component.text("Something went wrong when integrating your account!"))
-            return
+            return false
         }
 
         sender.sendMessage(Component.text("Your account has successfully integrated. DiscordID: $discordID, MinecraftUUID:${sender.uuid}"))
+        return true
     }
 }
