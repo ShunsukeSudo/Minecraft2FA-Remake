@@ -131,10 +131,8 @@ class Authentication(
         transaction(database) {
             bc = AuthBackupCodeTable.selectAll().where { AuthBackupCodeTable.authID eq authID }.map { it[AuthBackupCodeTable.backUpCodes] }
         }
-        if(bc.isEmpty())
-            return Collections.emptyList()
 
-        return bc
+        return if(bc.isNotEmpty()) bc else emptyList()
     }
 
     /**
@@ -154,10 +152,6 @@ class Authentication(
             }
         }
 
-        return if(authID.isEmpty()) {
-            -1
-        } else {
-            authID.first()
-        }
+        return if(authID.isNotEmpty()) authID.first() else -1
     }
 }

@@ -189,7 +189,7 @@ class Integration(
                 it[IntegrationInfoTable.id].value
             }
         }
-        return if(playerID.first() > 0) playerID.first() else -1
+        return if(playerID.isNotEmpty()) playerID.first() else -1
     }
 
     /**
@@ -212,7 +212,7 @@ class Integration(
                 it[IntegrationInfoTable.id].value
             }
         }
-        return if(playerID.first() > 0) playerID.first() else -1
+        return if(playerID.isNotEmpty()) playerID.first() else -1
     }
 
     /**
@@ -235,7 +235,7 @@ class Integration(
                 it[IntegrationInfoTable.minecraftUUID]
             }
         }
-        return minecraftUUID.first().ifEmpty { null }
+        return if(minecraftUUID.isNotEmpty()) minecraftUUID.first().ifEmpty { null } else null
     }
 
     /**
@@ -254,6 +254,6 @@ class Integration(
                 it[IntegrationInfoTable.discordID]
             }
         }
-        return if(discordID.first() > 0) discordID.first() else -1
+        return if(discordID.isNotEmpty()) discordID.first() else -1
     }
 }
