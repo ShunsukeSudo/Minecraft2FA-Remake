@@ -3,6 +3,7 @@ package com.github.shunsukesudo.minecraft2fa.shared.discord
 import com.github.shunsukesudo.minecraft2fa.shared.configuration.DiscordBotConfiguration
 import com.github.shunsukesudo.minecraft2fa.shared.configuration.PluginConfiguration
 import com.github.shunsukesudo.minecraft2fa.shared.database.MC2FADatabase
+import com.github.shunsukesudo.minecraft2fa.shared.minecraft.SharedPlugin
 import dev.creativition.simplejdautil.SimpleJDAUtil
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
@@ -46,7 +47,7 @@ class DiscordBot(
         SimpleJDAUtil.addSearchPath("com.github.shunsukesudo.minecraft2fa.shared.discord.commands.")
 
         jda = SimpleJDAUtil
-            .registerListeners(jdaBuilder, ClassLoader.getPlatformClassLoader())
+            .registerListeners(jdaBuilder, SharedPlugin.plugin.javaClass.classLoader)
             .build()
             .awaitReady()
 
