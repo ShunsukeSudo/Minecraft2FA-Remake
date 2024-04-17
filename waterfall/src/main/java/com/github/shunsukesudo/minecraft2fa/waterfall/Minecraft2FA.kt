@@ -18,6 +18,7 @@ class Minecraft2FA: Plugin(), IPlugin {
     companion object{
         private lateinit var pluginConfig: PluginConfiguration
         private lateinit var pluginDatabase: MC2FADatabase
+        private lateinit var pluginInstance: Plugin
 
         fun getPluginConfig(): PluginConfiguration {
             return pluginConfig
@@ -26,10 +27,15 @@ class Minecraft2FA: Plugin(), IPlugin {
         fun getDatabase(): MC2FADatabase {
             return pluginDatabase
         }
+
+        fun getInstance(): Plugin {
+            return pluginInstance
+        }
     }
 
     init {
         SharedPlugin.plugin = this
+        pluginInstance = this
     }
 
     override val pluginConfiguration: PluginConfiguration
