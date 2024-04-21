@@ -83,6 +83,11 @@ class AuthCommand: ListenerAdapter() {
 
 
     private fun registerCommandAction(event: SlashCommandInteractionEvent) {
+        if(!database.authentication().is2FAAuthenticationInformationExists(database.integration().getPlayerID(event.user.idLong))) {
+            DiscordBot.replyErrorMessage(event, "Seems you haven't integrated minecraft account with discord. Please integrate first.")
+            return
+        }
+
         if(database.authentication().is2FAAuthenticationInformationExists(database.integration().getPlayerID(event.user.idLong))) {
            event.reply("You have already registered the 2FA!").setEphemeral(true).queue()
            return
@@ -144,6 +149,11 @@ class AuthCommand: ListenerAdapter() {
 
 
     private fun unRegisterCommandAction(event: SlashCommandInteractionEvent) {
+        if(!database.authentication().is2FAAuthenticationInformationExists(database.integration().getPlayerID(event.user.idLong))) {
+            DiscordBot.replyErrorMessage(event, "Seems you haven't integrated minecraft account with discord. Please integrate first.")
+            return
+        }
+
         val secretKey = database.authentication().get2FASecretKey(database.integration().getPlayerID(event.user.idLong))
         if(secretKey == null) {
             DiscordBot.replyErrorMessage(event, "Seems you haven't registered the 2FA. Please register 2FA first.")
@@ -188,6 +198,11 @@ class AuthCommand: ListenerAdapter() {
 
 
     private fun verifyCommandAction(event: SlashCommandInteractionEvent) {
+        if(!database.authentication().is2FAAuthenticationInformationExists(database.integration().getPlayerID(event.user.idLong))) {
+            DiscordBot.replyErrorMessage(event, "Seems you haven't integrated minecraft account with discord. Please integrate first.")
+            return
+        }
+
         val secretKey = database.authentication().get2FASecretKey(database.integration().getPlayerID(event.user.idLong))
         if(secretKey == null) {
             DiscordBot.replyErrorMessage(event, "Seems you haven't registered the 2FA. Please register 2FA first.")
