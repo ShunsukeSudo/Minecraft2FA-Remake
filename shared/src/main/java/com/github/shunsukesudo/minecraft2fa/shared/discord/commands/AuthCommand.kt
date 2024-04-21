@@ -6,6 +6,7 @@ import com.github.shunsukesudo.minecraft2fa.shared.authentication.User2FA
 import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
 import com.github.shunsukesudo.minecraft2fa.shared.event.MC2FAEvent
 import com.github.shunsukesudo.minecraft2fa.shared.event.auth.AuthSuccessEvent
+import com.github.shunsukesudo.minecraft2fa.shared.minecraft.SharedPlugin
 import com.github.shunsukesudo.minecraft2fa.shared.util.QRCodeUtil
 import dev.creativition.simplejdautil.SimpleJDAUtil
 import dev.creativition.simplejdautil.SlashCommandBuilder
@@ -239,6 +240,9 @@ class AuthCommand: ListenerAdapter() {
         }
 
         MC2FAEvent.callEvent(AuthSuccessEvent(event.user.idLong))
+        event.reply("Your session is now verified! Your verified session will expire in ${SharedPlugin.pluginConfiguration.authConfiguration.sessionExpireTimeInSeconds} seconds.")
+            .setEphemeral(true)
+            .queue()
     }
 
 
