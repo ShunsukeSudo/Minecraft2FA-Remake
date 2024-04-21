@@ -83,7 +83,7 @@ class AuthCommand: ListenerAdapter() {
 
 
     private fun registerCommandAction(event: SlashCommandInteractionEvent) {
-        if(!database.authentication().is2FAAuthenticationInformationExists(database.integration().getPlayerID(event.user.idLong))) {
+        if(!database.integration().isIntegrationInformationExists(event.user.idLong)) {
             DiscordBot.replyErrorMessage(event, "Seems you haven't integrated minecraft account with discord. Please integrate first.")
             return
         }
@@ -149,7 +149,7 @@ class AuthCommand: ListenerAdapter() {
 
 
     private fun unRegisterCommandAction(event: SlashCommandInteractionEvent) {
-        if(!database.authentication().is2FAAuthenticationInformationExists(database.integration().getPlayerID(event.user.idLong))) {
+        if(!database.integration().isIntegrationInformationExists(event.user.idLong)) {
             DiscordBot.replyErrorMessage(event, "Seems you haven't integrated minecraft account with discord. Please integrate first.")
             return
         }
@@ -198,7 +198,7 @@ class AuthCommand: ListenerAdapter() {
 
 
     private fun verifyCommandAction(event: SlashCommandInteractionEvent) {
-        if(!database.authentication().is2FAAuthenticationInformationExists(database.integration().getPlayerID(event.user.idLong))) {
+        if(!database.integration().isIntegrationInformationExists(event.user.idLong)) {
             DiscordBot.replyErrorMessage(event, "Seems you haven't integrated minecraft account with discord. Please integrate first.")
             return
         }
