@@ -1,17 +1,23 @@
 package com.github.shunsukesudo.minecraft2fa.paper
 
+import com.github.shunsukesudo.minecraft2fa.paper.events.AuthSessionExpireEventListenerPaper
+import com.github.shunsukesudo.minecraft2fa.paper.events.AuthSuccessEventListenerPaper
 import com.github.shunsukesudo.minecraft2fa.paper.events.PlayerJoinListener
 import com.github.shunsukesudo.minecraft2fa.paper.events.PluginMessagingChannelListener
 import com.github.shunsukesudo.minecraft2fa.shared.configuration.*
 import com.github.shunsukesudo.minecraft2fa.shared.database.DatabaseFactory
 import com.github.shunsukesudo.minecraft2fa.shared.database.MC2FADatabase
 import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
+import com.github.shunsukesudo.minecraft2fa.shared.event.MC2FAEvent
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.IPlugin
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.SharedPlugin
+import com.github.shunsukesudo.minecraft2fa.shared.minecraft.player.SharedPlayer
+import com.github.shunsukesudo.minecraft2fa.shared.minecraft.player.SharedPlayerPaper
 import net.dv8tion.jda.api.exceptions.InvalidTokenException
 import org.bukkit.Bukkit
-import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class Minecraft2FA: JavaPlugin(), IPlugin {
 
@@ -46,6 +52,24 @@ class Minecraft2FA: JavaPlugin(), IPlugin {
     override val database: MC2FADatabase
         get() = getDatabase()
 
+    override fun runTask(runnable: Runnable, delay: Long, unit: TimeUnit) {
+        val delayTime = when(unit) {
+            TimeUnit.NANOSECONDS -> delay/1000/1000/1000*20
+            TimeUnit.MICROSECONDS -> delay/1000/1000*20
+            TimeUnit.MILLISECONDS -> delay/1000*20
+            TimeUnit.SECONDS -> delay*20
+            TimeUnit.MINUTES -> delay*60*20
+            TimeUnit.HOURS -> delay*60*60*20
+            TimeUnit.DAYS -> delay*60*60*24*20
+        }
+        server.scheduler.runTaskLater(this, runnable, delayTime)
+    }
+
+    override fun findPlayer(uuid: UUID): SharedPlayer? {
+        val player = server.getPlayer(uuid)
+        return if(player != null) SharedPlayerPaper(player) else null
+    }
+
     override fun onEnable() {
         isBungeeEnabled = Bukkit.spigot().config.getBoolean("settings.bungeecord")
 
@@ -73,6 +97,9 @@ class Minecraft2FA: JavaPlugin(), IPlugin {
                 onDisable()
                 return
             }
+
+            MC2FAEvent.addListener(AuthSuccessEventListenerPaper())
+            MC2FAEvent.addListener(AuthSessionExpireEventListenerPaper())
         }
         else {
             server.pluginManager.registerEvents(PlayerJoinListener(), this)

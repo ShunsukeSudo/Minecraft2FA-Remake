@@ -17,7 +17,7 @@ class MC2FAEvent {
                         return@classes
                     }
                     func.parameters.forEach { param ->
-                        if(param.type.javaType == event.javaClass) {
+                        if(param.type.javaType == event.javaClass || param.type.javaType == GenericEvent::class.java) {
                             func.call(listenerClass, event)
                             return@classes
                         }
