@@ -7,6 +7,8 @@ import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
 import com.github.shunsukesudo.minecraft2fa.shared.event.MC2FAEvent
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.IPlugin
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.SharedPlugin
+import com.github.shunsukesudo.minecraft2fa.shared.minecraft.player.SharedPlayer
+import com.github.shunsukesudo.minecraft2fa.shared.minecraft.player.SharedPlayerWaterfall
 import com.github.shunsukesudo.minecraft2fa.waterfall.commands.MC2FACommandWaterfall
 import com.github.shunsukesudo.minecraft2fa.waterfall.events.AuthSessionExpireEventListener
 import com.github.shunsukesudo.minecraft2fa.waterfall.events.AuthSuccessEventListener
@@ -17,6 +19,8 @@ import net.md_5.bungee.config.ConfigurationProvider
 import net.md_5.bungee.config.YamlConfiguration
 import java.io.File
 import java.io.FileOutputStream
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 class Minecraft2FA: Plugin(), IPlugin {
 
@@ -47,6 +51,14 @@ class Minecraft2FA: Plugin(), IPlugin {
         get() = getPluginConfig()
     override val database: MC2FADatabase
         get() = getDatabase()
+
+    override fun runTask(runnable: Runnable, delay: Long, unit: TimeUnit) {
+        proxy.scheduler.schedule(this, runnable, delay, unit)
+    }
+
+    override fun findPlayer(uuid: UUID): SharedPlayer {
+        return SharedPlayerWaterfall(proxy.getPlayer(uuid))
+    }
 
     override fun onEnable() {
         try {
