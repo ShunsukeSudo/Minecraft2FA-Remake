@@ -5,6 +5,7 @@ import com.github.shunsukesudo.minecraft2fa.shared.authentication.MCUserAuthStat
 import com.google.common.io.ByteStreams
 import org.bukkit.entity.Player
 import org.bukkit.plugin.messaging.PluginMessageListener
+import java.lang.IllegalArgumentException
 import java.util.*
 
 class PluginMessagingChannelListener: PluginMessageListener {
@@ -19,13 +20,21 @@ class PluginMessagingChannelListener: PluginMessageListener {
             return
 
         val uuid = UUID.fromString(inps.readUTF())
-        val isVerified = inps.readBoolean()
+        val statusStr = inps.readUTF()
 
-        if(isVerified) {
-            MCUserAuth.setUserAuthorizationStatus(uuid, MCUserAuthStatus.AUTHORIZED)
+        val status = try {
+            MCUserAuthStatus.valueOf(statusStr)
+        } catch (e: IllegalArgumentException) {
+            MCUserAuthStatus.NOT_AUTHORIZED
         }
-        else {
-            MCUserAuth.setUserAuthorizationStatus(uuid, MCUserAuthStatus.NOT_AUTHORIZED)
+
+        when(status) {
+            MCUserAuthStatus.AUTHORIZED -> {
+                MCUserAuth.setUserAuthorizationStatus(uuid, status)
+            }
+            else -> {
+                MCUserAuth.setUserAuthorizationStatus(uuid, status)
+            }
         }
     }
 }

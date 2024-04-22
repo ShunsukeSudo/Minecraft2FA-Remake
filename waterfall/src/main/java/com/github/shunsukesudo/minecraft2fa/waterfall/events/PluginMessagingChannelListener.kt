@@ -18,21 +18,22 @@ class PluginMessagingChannelListener: Listener {
         if (!event.tag.equals("mc2fa:authentication", ignoreCase = true))
             return
 
+        if(event.sender !is Server)
+            return
 
         val inp = ByteStreams.newDataInput(event.data)
         val subChannel = inp.readUTF()
         val userUUID = inp.readUTF()
 
-        if (subChannel.equals("authInformationShare", ignoreCase = true)){
+        if (!subChannel.equals("AuthInformationRequest", ignoreCase = true))
+            return
 
-            when(event.receiver) {
-                // message from server
-                is ProxiedPlayer -> {
-                    val receiver = event.receiver as ProxiedPlayer
-                    sendAuthData(receiver.server, UUID.fromString(userUUID))
-                }
-            }
-        }
+
+        if(event.receiver !is ProxiedPlayer)
+            return
+
+        val receiver = event.receiver as ProxiedPlayer
+        sendAuthData(receiver.server, UUID.fromString(userUUID))
     }
 
     private fun sendAuthData(server: Server, uuid: UUID){
@@ -42,7 +43,7 @@ class PluginMessagingChannelListener: Listener {
         val outStream = ByteStreams.newDataOutput()
         outStream.writeUTF("authInformationShare")
         outStream.writeUTF(uuid.toString())
-        outStream.writeBoolean(MCUserAuth.getUserAuthorizationStatus(uuid) == MCUserAuthStatus.AUTHORIZED)
+        outStream.writeUTF(MCUserAuth.getUserAuthorizationStatus(uuid).toString())
 
         server.sendData("mc2fa:authentication", outStream.toByteArray())
     }
