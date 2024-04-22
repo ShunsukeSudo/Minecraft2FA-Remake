@@ -10,8 +10,8 @@ import com.github.shunsukesudo.minecraft2fa.shared.minecraft.SharedPlugin
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.player.SharedPlayer
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.player.SharedPlayerWaterfall
 import com.github.shunsukesudo.minecraft2fa.waterfall.commands.MC2FACommandWaterfall
-import com.github.shunsukesudo.minecraft2fa.waterfall.events.AuthSessionExpireEventListener
-import com.github.shunsukesudo.minecraft2fa.waterfall.events.AuthSuccessEventListener
+import com.github.shunsukesudo.minecraft2fa.waterfall.events.AuthSessionExpireEventListenerWaterfall
+import com.github.shunsukesudo.minecraft2fa.waterfall.events.AuthSuccessEventListenerWaterfall
 import com.github.shunsukesudo.minecraft2fa.waterfall.events.PluginMessagingChannelListener
 import net.dv8tion.jda.api.exceptions.InvalidTokenException
 import net.md_5.bungee.api.plugin.Plugin
@@ -86,6 +86,9 @@ class Minecraft2FA: Plugin(), IPlugin {
 
         proxy.registerChannel("mc2fa:authentication")
         proxy.pluginManager.registerListener(this, PluginMessagingChannelListener())
+
+        MC2FAEvent.addListener(AuthSuccessEventListenerWaterfall())
+        MC2FAEvent.addListener(AuthSessionExpireEventListenerWaterfall())
     }
 
     private fun parseConfig(): PluginConfiguration {

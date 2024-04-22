@@ -1,11 +1,14 @@
 package com.github.shunsukesudo.minecraft2fa.paper
 
+import com.github.shunsukesudo.minecraft2fa.paper.events.AuthSessionExpireEventListenerPaper
+import com.github.shunsukesudo.minecraft2fa.paper.events.AuthSuccessEventListenerPaper
 import com.github.shunsukesudo.minecraft2fa.paper.events.PlayerJoinListener
 import com.github.shunsukesudo.minecraft2fa.paper.events.PluginMessagingChannelListener
 import com.github.shunsukesudo.minecraft2fa.shared.configuration.*
 import com.github.shunsukesudo.minecraft2fa.shared.database.DatabaseFactory
 import com.github.shunsukesudo.minecraft2fa.shared.database.MC2FADatabase
 import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
+import com.github.shunsukesudo.minecraft2fa.shared.event.MC2FAEvent
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.IPlugin
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.SharedPlugin
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.player.SharedPlayer
@@ -94,6 +97,9 @@ class Minecraft2FA: JavaPlugin(), IPlugin {
                 onDisable()
                 return
             }
+
+            MC2FAEvent.addListener(AuthSuccessEventListenerPaper())
+            MC2FAEvent.addListener(AuthSessionExpireEventListenerPaper())
         }
         else {
             server.pluginManager.registerEvents(PlayerJoinListener(), this)
