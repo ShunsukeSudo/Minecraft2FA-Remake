@@ -21,7 +21,7 @@ class PlayerJoinListener: Listener {
         outStream.writeUTF(event.player.uniqueId.toString())
 
         plugin.server.scheduler.runTaskLater(plugin, Runnable {
-            event.player.sendPluginMessage(plugin, "mc2fa:authentication", outStream.toByteArray())
+            player.sendPluginMessage(plugin, "mc2fa:authentication", outStream.toByteArray())
         }, 30)
     }
 }

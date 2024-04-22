@@ -1,5 +1,7 @@
 package com.github.shunsukesudo.minecraft2fa.paper
 
+import com.github.shunsukesudo.minecraft2fa.paper.events.PlayerJoinListener
+import com.github.shunsukesudo.minecraft2fa.paper.events.PluginMessagingChannelListener
 import com.github.shunsukesudo.minecraft2fa.shared.configuration.*
 import com.github.shunsukesudo.minecraft2fa.shared.database.DatabaseFactory
 import com.github.shunsukesudo.minecraft2fa.shared.database.MC2FADatabase
@@ -36,13 +38,16 @@ class Minecraft2FA: JavaPlugin(), IPlugin {
         pluginInstance = this
     }
 
+    private var isBungeeEnabled = false
+    private lateinit var discordBot: DiscordBot
+
     override val pluginConfiguration: PluginConfiguration
         get() = getPluginConfig()
     override val database: MC2FADatabase
         get() = getDatabase()
 
     override fun onEnable() {
-        val isBungeeEnabled = Bukkit.spigot().config.getBoolean("settings.bungeecord")
+        isBungeeEnabled = Bukkit.spigot().config.getBoolean("settings.bungeecord")
 
         try {
             pluginConfig = parseConfig()
@@ -61,7 +66,7 @@ class Minecraft2FA: JavaPlugin(), IPlugin {
             pluginDatabase = databaseConnection
 
             try {
-                DiscordBot(pluginConfiguration.discordBotConfiguration, databaseConnection)
+                discordBot = DiscordBot(pluginConfiguration.discordBotConfiguration, databaseConnection)
             } catch (e: InvalidTokenException) {
                 slF4JLogger.error("Provided token is invalid! Check your config!")
                 e.printStackTrace()
@@ -69,11 +74,21 @@ class Minecraft2FA: JavaPlugin(), IPlugin {
                 return
             }
         }
-
+        else {
+            server.pluginManager.registerEvents(PlayerJoinListener(), this)
+            server.messenger.registerOutgoingPluginChannel(this, "mc2fa:authentication")
+            server.messenger.registerIncomingPluginChannel(this, "mc2fa:authentication", PluginMessagingChannelListener())
+        }
     }
 
     override fun onDisable() {
-
+        if(!isBungeeEnabled) {
+            discordBot.jda.shutdownNow()
+        }
+        else {
+            server.messenger.unregisterOutgoingPluginChannel(this)
+            server.messenger.unregisterIncomingPluginChannel(this)
+        }
     }
 
 
