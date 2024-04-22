@@ -7,6 +7,7 @@ import com.github.shunsukesudo.minecraft2fa.shared.event.MC2FAEvent
 import com.github.shunsukesudo.minecraft2fa.shared.event.auth.AuthSessionExpireEvent
 import com.github.shunsukesudo.minecraft2fa.shared.event.auth.AuthSuccessEvent
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.SharedPlugin
+import com.github.shunsukesudo.minecraft2fa.shared.minecraft.message.CommonMessages
 import net.kyori.adventure.text.Component
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -24,7 +25,7 @@ class AuthSuccessEventListener : SharedMC2FAEventListener {
 
         val player = SharedPlugin.plugin.findPlayer(uuid)
 
-        player?.sendMessage(Component.text("TODO_SESSION_VERIFIED"))
+        player?.sendMessage(CommonMessages.yourSessionVerified().getMessageWithPrefix())
 
         val authExpireEvent = AuthSessionExpireEvent(uuid)
         SharedPlugin.plugin.runTask({

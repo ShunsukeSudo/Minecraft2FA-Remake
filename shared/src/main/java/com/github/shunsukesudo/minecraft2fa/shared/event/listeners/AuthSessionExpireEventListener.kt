@@ -5,6 +5,7 @@ import com.github.shunsukesudo.minecraft2fa.shared.authentication.MCUserAuthStat
 import com.github.shunsukesudo.minecraft2fa.shared.event.GenericEvent
 import com.github.shunsukesudo.minecraft2fa.shared.event.auth.AuthSessionExpireEvent
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.SharedPlugin
+import com.github.shunsukesudo.minecraft2fa.shared.minecraft.message.CommonMessages
 import net.kyori.adventure.text.Component
 
 class AuthSessionExpireEventListener: SharedMC2FAEventListener {
@@ -16,7 +17,7 @@ class AuthSessionExpireEventListener: SharedMC2FAEventListener {
 
         val player = SharedPlugin.plugin.findPlayer(uuid)
 
-        player?.sendMessage(Component.text("TODO_SESSION_EXPIRED"))
+        player?.sendMessage(CommonMessages.yourSessionExpired().getMessageWithPrefix())
 
         MCUserAuth.setUserAuthorizationStatus(uuid, MCUserAuthStatus.NOT_AUTHORIZED)
     }
