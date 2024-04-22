@@ -32,7 +32,7 @@ subprojects {
 
     dependencies {
         implementation("net.dv8tion:JDA:5.0.0-beta.21")
-        implementation("dev.creativition:simplejdautil:0.0.1")
+        implementation("dev.creativition:simplejdautil:0.0.2")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("net.kyori:adventure-platform-bungeecord:4.3.0")
         implementation("net.kyori:adventure-platform-bukkit:4.3.0")
