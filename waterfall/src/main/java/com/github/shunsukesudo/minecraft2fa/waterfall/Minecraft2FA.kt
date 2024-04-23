@@ -13,7 +13,6 @@ import com.github.shunsukesudo.minecraft2fa.waterfall.commands.MC2FACommandWater
 import com.github.shunsukesudo.minecraft2fa.waterfall.events.AuthSessionExpireEventListenerWaterfall
 import com.github.shunsukesudo.minecraft2fa.waterfall.events.AuthSuccessEventListenerWaterfall
 import com.github.shunsukesudo.minecraft2fa.waterfall.events.CommandExecuteEventListener
-import com.github.shunsukesudo.minecraft2fa.waterfall.events.PluginMessagingChannelListener
 import net.dv8tion.jda.api.exceptions.InvalidTokenException
 import net.md_5.bungee.api.plugin.Plugin
 import net.md_5.bungee.config.ConfigurationProvider
@@ -86,7 +85,6 @@ class Minecraft2FA: Plugin(), IPlugin {
         proxy.pluginManager.registerCommand(this, MC2FACommandWaterfall())
 
         proxy.registerChannel("mc2fa:authentication")
-        proxy.pluginManager.registerListener(this, PluginMessagingChannelListener())
         proxy.pluginManager.registerListener(this, CommandExecuteEventListener())
 
         MC2FAEvent.addListener(AuthSuccessEventListenerWaterfall())
