@@ -13,4 +13,8 @@ object CommonMessages {
     fun yourSessionVerified(): PluginMessage {
         return PluginMessage("Your session verified! You can use any command if you have right permission.")
     }
+
+    fun yourNotInVerifiedSession(): PluginMessage {
+        return PluginMessage("You cannot use commands when not in verified session! Please verify in discord first.")
+    }
 }

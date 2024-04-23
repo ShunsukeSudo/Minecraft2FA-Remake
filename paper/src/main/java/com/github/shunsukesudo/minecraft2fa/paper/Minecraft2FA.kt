@@ -2,6 +2,7 @@ package com.github.shunsukesudo.minecraft2fa.paper
 
 import com.github.shunsukesudo.minecraft2fa.paper.events.AuthSessionExpireEventListenerPaper
 import com.github.shunsukesudo.minecraft2fa.paper.events.AuthSuccessEventListenerPaper
+import com.github.shunsukesudo.minecraft2fa.paper.events.CommandExecuteEventListener
 import com.github.shunsukesudo.minecraft2fa.paper.events.PlayerJoinListener
 import com.github.shunsukesudo.minecraft2fa.paper.events.PluginMessagingChannelListener
 import com.github.shunsukesudo.minecraft2fa.shared.configuration.*
@@ -100,6 +101,7 @@ class Minecraft2FA: JavaPlugin(), IPlugin {
 
             MC2FAEvent.addListener(AuthSuccessEventListenerPaper())
             MC2FAEvent.addListener(AuthSessionExpireEventListenerPaper())
+            server.pluginManager.registerEvents(CommandExecuteEventListener(), this)
         }
         else {
             server.pluginManager.registerEvents(PlayerJoinListener(), this)
