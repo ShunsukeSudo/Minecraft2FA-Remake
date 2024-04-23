@@ -17,7 +17,7 @@ class CommandExecuteEventListener: Listener {
             return
 
         val args = event.message.split(" ")
-        if(args[0].equals(MinecraftConstants.commandName2FA, ignoreCase = true))
+        if(args[0].equals("/${MinecraftConstants.commandName2FA}", ignoreCase = true))
             return
 
         if(MCUserAuth.getUserAuthorizationStatus(player.uniqueId) == MCUserAuthStatus.AUTHORIZED)
