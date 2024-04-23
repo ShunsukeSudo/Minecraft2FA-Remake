@@ -18,8 +18,7 @@ class AuthSuccessEventListener : SharedMC2FAEventListener {
             return
 
         val discordID = event.getDiscordID()
-        val uuidStr = SharedPlugin.database.integration().getMinecraftUUIDFromDiscordID(discordID).toString()
-        val uuid = UUID.fromString(uuidStr)
+        val uuid = event.getMinecraftUUID()
 
         MCUserAuth.setUserAuthorizationStatus(uuid, MCUserAuthStatus.AUTHORIZED)
 
