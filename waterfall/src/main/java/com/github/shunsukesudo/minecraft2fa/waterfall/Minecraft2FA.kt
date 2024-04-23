@@ -96,6 +96,7 @@ class Minecraft2FA: Plugin(), IPlugin {
         val configuration = ConfigurationProvider.getProvider(YamlConfiguration::class.java).load(File(dataFolder, "config.yml"))
 
         val sessionExpireTimeInSeconds = configuration.getInt("totp_auth.sessionExpireTimeInSeconds", -1)
+        val totpIssuerName = configuration.getString("totp_auth.totpIssuerName", "MC2FA")
 
         val databaseType = DatabaseType.valueOf(configuration.getString("database.type"))
         var databaseAddress = configuration.getString("database.address")
@@ -108,7 +109,7 @@ class Minecraft2FA: Plugin(), IPlugin {
 
         val discordBotToken = configuration.getString("discord.bot_token")
 
-        val authenticationConfiguration = AuthenticationConfiguration(sessionExpireTimeInSeconds)
+        val authenticationConfiguration = AuthenticationConfiguration(sessionExpireTimeInSeconds, totpIssuerName)
 
         val databaseConfiguration = DatabaseConfiguration(
             databaseType,

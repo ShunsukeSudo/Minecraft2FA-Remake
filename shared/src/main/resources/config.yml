@@ -10,3 +10,4 @@ database:
 
 totp_auth:
   sessionExpireTimeInSeconds: 10
+  totpIssuerName: MC2FA
