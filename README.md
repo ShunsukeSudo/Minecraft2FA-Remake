@@ -1,4 +1,11 @@
+# Minecraft2FA
+
+Provides 2FA feature in Minecraft server/proxy
+
+
 ## Setup
+
+### Server
 
 1. Download file from releases
 2. Put .jar file into plugins folder
@@ -6,6 +13,13 @@
 4. Shutdown server/proxy
 5. Edit config.yml
 6. Done
+
+### Discord
+
+1. Goto https://discord.com/developers/applications
+2. Create bot
+3. Copy token
+4. Paste into config.yml
 
 
 ## Configuration
