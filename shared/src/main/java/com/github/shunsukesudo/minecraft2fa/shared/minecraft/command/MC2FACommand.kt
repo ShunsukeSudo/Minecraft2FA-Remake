@@ -38,6 +38,7 @@ class MC2FACommand: SharedCommand {
 
         if(!IntegrationManager.isValidIntegrationToken(token)) {
             sender.sendMessage(ErrorMessages.invalidTokenSpecified().getMessageWithPrefix())
+            return false
         }
 
         val discordID = IntegrationManager.getDiscordIDFromToken(token)
