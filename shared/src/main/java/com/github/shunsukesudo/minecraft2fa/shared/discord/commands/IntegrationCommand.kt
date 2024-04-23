@@ -2,6 +2,7 @@ package com.github.shunsukesudo.minecraft2fa.shared.discord.commands
 
 import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
 import com.github.shunsukesudo.minecraft2fa.shared.integration.IntegrationManager
+import com.github.shunsukesudo.minecraft2fa.shared.minecraft.MinecraftConstants
 import dev.creativition.simplejdautil.SimpleJDAUtil
 import dev.creativition.simplejdautil.SlashCommandBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
@@ -12,7 +13,7 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button
 class IntegrationCommand: ListenerAdapter() {
 
     companion object {
-        private const val commandName = "/mc2fa"
+        private const val commandName = MinecraftConstants.commandName2FA
         private const val integrationUnregisterID = "integration-unregister"
 
         init {
@@ -76,13 +77,13 @@ class IntegrationCommand: ListenerAdapter() {
 
         if(IntegrationManager.isIntegrationInProgress(event.user.idLong)) {
             val integrationToken = IntegrationManager.registerIntegrationToken(event.user.idLong)
-            event.reply("Integration token renewed. use `$commandName register $integrationToken` in minecraft server to proceed.")
+            event.reply("Integration token renewed. use `$commandName connect $integrationToken` in minecraft server to proceed.")
                 .setEphemeral(true)
                 .queue()
         }
         else {
             val integrationToken = IntegrationManager.registerIntegrationToken(event.user.idLong)
-            event.reply("Integration token generated. use `$commandName register $integrationToken` in minecraft server to proceed.")
+            event.reply("Integration token generated. use `$commandName connect $integrationToken` in minecraft server to proceed.")
                 .setEphemeral(true)
                 .queue()
         }

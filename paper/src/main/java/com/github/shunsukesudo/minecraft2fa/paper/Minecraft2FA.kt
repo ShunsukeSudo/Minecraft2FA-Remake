@@ -1,5 +1,6 @@
 package com.github.shunsukesudo.minecraft2fa.paper
 
+import com.github.shunsukesudo.minecraft2fa.paper.commands.MC2FACommandPaper
 import com.github.shunsukesudo.minecraft2fa.paper.events.AuthSessionExpireEventListenerPaper
 import com.github.shunsukesudo.minecraft2fa.paper.events.AuthSuccessEventListenerPaper
 import com.github.shunsukesudo.minecraft2fa.paper.events.CommandExecuteEventListener
@@ -9,6 +10,7 @@ import com.github.shunsukesudo.minecraft2fa.shared.database.MC2FADatabase
 import com.github.shunsukesudo.minecraft2fa.shared.discord.DiscordBot
 import com.github.shunsukesudo.minecraft2fa.shared.event.MC2FAEvent
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.IPlugin
+import com.github.shunsukesudo.minecraft2fa.shared.minecraft.MinecraftConstants
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.SharedPlugin
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.player.SharedPlayer
 import com.github.shunsukesudo.minecraft2fa.shared.minecraft.player.SharedPlayerPaper
@@ -100,6 +102,7 @@ class Minecraft2FA: JavaPlugin(), IPlugin {
             MC2FAEvent.addListener(AuthSuccessEventListenerPaper())
             MC2FAEvent.addListener(AuthSessionExpireEventListenerPaper())
             server.pluginManager.registerEvents(CommandExecuteEventListener(), this)
+            getCommand(MinecraftConstants.commandName2FA)?.setExecutor(MC2FACommandPaper())
         }
     }
 
