@@ -20,10 +20,10 @@ bukkit {
 
 
     commands {
-        register("connectdiscord") {
+        register("mc2fa") {
             description = "Used for integrating discord and minecraft account"
             permission = "mc2fa.connect"
-            usage = "/connect"
+            usage = ""
             permissionMessage = "You don't have permission to perform this command."
         }
     }
