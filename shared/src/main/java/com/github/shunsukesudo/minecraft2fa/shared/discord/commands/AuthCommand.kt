@@ -27,7 +27,6 @@ import javax.imageio.ImageIO
 class AuthCommand: ListenerAdapter() {
 
     companion object {
-        var otpIssuerName = "Minecraft2FA"
         private const val verificationRegisterID = "2fa-verification-register"
         private const val verificationUnRegisterID = "2fa-verification-unregister"
         private const val verificationVerifyID = "2fa-verification-verify"
@@ -95,7 +94,7 @@ class AuthCommand: ListenerAdapter() {
         }
 
         val credentials = User2FA.createNewCredentials(event.user.idLong)
-        val totpAuthRegistrationURI = "otpauth://totp/Minecraft2FA:${event.member!!.effectiveName}?secret=${credentials.getSecretKey()}&issuer=$otpIssuerName"
+        val totpAuthRegistrationURI = "otpauth://totp/Minecraft2FA:${event.member!!.effectiveName}?secret=${credentials.getSecretKey()}&issuer=${SharedPlugin.pluginConfiguration.authConfiguration.totpIssuerName}"
 
         try {
             val image = QRCodeUtil.generateQRCodeFromString(totpAuthRegistrationURI)
