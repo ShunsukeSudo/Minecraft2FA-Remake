@@ -140,7 +140,7 @@ class AuthCommand: ListenerAdapter() {
                 backUpCodes
             )
 
-            event.reply("Your 2FA registered successfully!!").setEphemeral(true).queue()
+            event.reply("Your 2FA registered successfully!!\n Backup codes are: $backUpCodes").setEphemeral(true).queue()
         }
         else {
             event.reply("Invalid code! Please try again.").setEphemeral(true).queue()
@@ -172,7 +172,7 @@ class AuthCommand: ListenerAdapter() {
     }
 
     private fun unRegisterCommandModalAction(event: ModalInteractionEvent) {
-        val inputCode = event.getValue("$verificationUnRegisterID-input-${event.user.idLong}")?.asString?.toInt()
+        val inputCode = event.getValue("$verificationUnRegisterID-input-${event.user.idLong}")?.asString
         if(inputCode == null) {
             DiscordBot.replyErrorMessage(event, "Failed to get verification code!")
             return
@@ -185,7 +185,23 @@ class AuthCommand: ListenerAdapter() {
             return
         }
 
-        if (!User2FA.authorize(secretKey, inputCode)) {
+        if(inputCode.length > 6) {
+            val ic = inputCode.toInt()
+            val authID = database.authentication().getAuthID(userID)
+            val backupCodes = database.authentication().get2FABackUpCodes(authID)
+
+            backupCodes.forEach {code ->
+                if(code == ic) {
+                    when(database.authentication().remove2FAAuthenticationInformation(userID)) {
+                        0 -> DiscordBot.replyErrorMessage(event, "There is no 2FA information in database.")
+                        else -> event.reply("Your 2FA unregistered successfully!!").setEphemeral(true).queue()
+                    }
+                }
+            }
+        }
+
+
+        if (!User2FA.authorize(secretKey, inputCode.toInt())) {
             event.reply("Invalid code! Please try again.").setEphemeral(true).queue()
             return
         }
@@ -221,7 +237,7 @@ class AuthCommand: ListenerAdapter() {
     }
 
     private fun verifyCommandModalAction(event: ModalInteractionEvent) {
-        val inputCode = event.getValue("$verificationVerifyID-input-${event.user.idLong}")?.asString?.toInt()
+        val inputCode = event.getValue("$verificationVerifyID-input-${event.user.idLong}")?.asString
         if(inputCode == null) {
             DiscordBot.replyErrorMessage(event, "Failed to get verification code!")
             return
@@ -234,7 +250,12 @@ class AuthCommand: ListenerAdapter() {
             return
         }
 
-        if (!User2FA.authorize(secretKey, inputCode)) {
+        if(inputCode.length > 6) {
+            event.reply("Backup codes are only usable in unregister command!").setEphemeral(true).queue()
+            return
+        }
+
+        if (!User2FA.authorize(secretKey, inputCode.toInt())) {
             event.reply("Invalid code! Please try again.").setEphemeral(true).queue()
             return
         }
@@ -264,7 +285,7 @@ class AuthCommand: ListenerAdapter() {
     private fun getTextInput(id: String): TextInput {
         return TextInput.create(id, "2FA code", TextInputStyle.SHORT)
             .setMinLength(6)
-            .setMaxLength(6)
+            .setMaxLength(10)
             .setRequired(true)
             .build()
     }
