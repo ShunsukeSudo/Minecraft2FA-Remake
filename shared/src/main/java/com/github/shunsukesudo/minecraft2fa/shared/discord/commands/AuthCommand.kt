@@ -239,7 +239,8 @@ class AuthCommand: ListenerAdapter() {
             return
         }
 
-        MC2FAEvent.callEvent(AuthSuccessEvent(event.user.idLong))
+        val uuid = UUID.fromString(database.integration().getMinecraftUUIDFromDiscordID(event.user.idLong))
+        MC2FAEvent.callEvent(AuthSuccessEvent(event.user.idLong, uuid))
         event.reply("Your session is now verified! Your verified session will expire in ${SharedPlugin.pluginConfiguration.authConfiguration.sessionExpireTimeInSeconds} seconds.")
             .setEphemeral(true)
             .queue()
