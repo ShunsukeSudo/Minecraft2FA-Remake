@@ -122,6 +122,7 @@ class Minecraft2FA: JavaPlugin(), IPlugin {
         val bukkitConfiguration = this.config
 
         val sessionExpireTimeInSeconds = bukkitConfiguration.getInt("totp_auth.sessionExpireTimeInSeconds", -1)
+        val totpIssuerName = bukkitConfiguration.getString("totp_auth.totpIssuerName") ?: "MC2FA"
 
         val databaseType = DatabaseType.valueOf(bukkitConfiguration.getString("database.type") ?: "")
         var databaseAddress = bukkitConfiguration.getString("database.address") ?: ""
@@ -134,7 +135,7 @@ class Minecraft2FA: JavaPlugin(), IPlugin {
 
         val discordBotToken = bukkitConfiguration.getString("discord.bot_token") ?: ""
 
-        val authenticationConfiguration = AuthenticationConfiguration(sessionExpireTimeInSeconds)
+        val authenticationConfiguration = AuthenticationConfiguration(sessionExpireTimeInSeconds, totpIssuerName)
 
         val databaseConfiguration = DatabaseConfiguration(
             databaseType,
